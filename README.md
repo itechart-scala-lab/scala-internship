@@ -1,1 +1,1 @@
-# scala-internship
+# Itechart Scala Internship
