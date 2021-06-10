@@ -1,6 +1,6 @@
 package com.itechart.internship.cats
 
-object p1_Semigroup {
+object Semigroup {
 
   /**
     * Semigroup is Set with an associative binary operation.

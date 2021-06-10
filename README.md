@@ -1,5 +1,20 @@
 # itechart Scala Internship
 
+## General info
+
+- 2 workshops per week
+- Homework after each workshop  
+- Deadline for each homework is 1 week after announcement
+- After all workshops students will receive 2 week for implementation of course project
+
+## Workshop Requirements
+
+- lasts about 1.5 hour
+- 1-2 exercises during Workshop
+- homework
+
+## Schedule
+
 | 2021-* | Topics                                   | Responsible                                                       | Materials                                                                                                 |
 |--------|------------------------------------------|-------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------
 |   | Intro. FP & OOP concepts. Basics              | Gleb Streltsov                                                    | [Basics](src/main/scala/com/itechart/internship/basics/Basics.scala)                                      |

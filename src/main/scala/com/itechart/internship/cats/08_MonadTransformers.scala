@@ -5,7 +5,7 @@ import cats.effect.IO
 import cats.syntax.applicative._
 import cats.~>
 
-object p8_MonadTransformers {
+object MonadTransformersIntro {
   /**
     * The final topic for today is monad transformers.
     * So far we've seen a nice way to chain our executions via .map and .flatMap

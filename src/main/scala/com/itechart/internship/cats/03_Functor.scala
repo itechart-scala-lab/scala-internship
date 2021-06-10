@@ -2,7 +2,7 @@ package com.itechart.internship.cats
 
 import cats.effect.IO
 
-object p3_Functor {
+object Functor {
 
   /**
     * In the introduction part we saw three functions with different effects and we wanted a way to compose those functions.

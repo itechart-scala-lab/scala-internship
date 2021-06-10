@@ -2,7 +2,7 @@ package com.itechart.internship.cats
 
 import scala.concurrent.Future
 
-object p7_Traverse {
+object Traverse {
   import scala.concurrent.ExecutionContext.Implicits.global
 
   /**

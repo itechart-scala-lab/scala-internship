@@ -2,7 +2,7 @@ package com.itechart.internship.cats
 
 import cats.effect.ExitCode
 
-object p5_Monad {
+object Monad {
 
   /**
     * If we speak about monads in functional programming it would be more or less safe to say that anything,

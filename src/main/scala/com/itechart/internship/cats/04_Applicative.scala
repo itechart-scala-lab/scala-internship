@@ -1,6 +1,6 @@
 package com.itechart.internship.cats
 
-object p4_Applicative {
+object Applicative {
 
   /**
     * Applicative defines a `pure` method that allows us to construct an instance of Applicative

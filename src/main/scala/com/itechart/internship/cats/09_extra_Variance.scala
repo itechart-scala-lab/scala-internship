@@ -2,7 +2,7 @@ package com.itechart.internship.cats
 
 import java.time.Instant
 
-object p9_extra_Variance {
+object extraVariance {
   /*
        Covariant | Contravariant | Invariant
        useful reading https://www.oreilly.com/library/view/learning-scala/9781449368814/ch10.html Type Variance

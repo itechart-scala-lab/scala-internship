@@ -1,6 +1,6 @@
 package com.itechart.internship.cats
 
-object p2_Monoid {
+object Monoid {
 
   /**
     * Monoid is a Semigroup but with an `empty` element defined.

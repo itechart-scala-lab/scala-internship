@@ -3,7 +3,7 @@ package com.itechart.internship.cats
 import cats.ApplicativeError
 import cats.effect.IO
 
-object p6_MonadError {
+object MonadError {
 
   /**
     * Continuing discussion about abstracting over an effect type, we may want to describe a computation that

@@ -4,7 +4,7 @@ import cats.Monad
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 
-object p0_Introduction {
+object Introduction {
 
   /***
     * Our lecture is dedicated to a library that is widely used within Scala community - Cats.
