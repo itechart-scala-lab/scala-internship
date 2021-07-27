@@ -76,28 +76,18 @@ object Monad {
       ???
   }
 
+  /**
+    * When we work with a concrete Monad like List or Option we can call .flatMap .pure or .map directly.
+    * But what if we have some abstract effect F[_]?
+    * As we have seen before, we can demand an instance of a certain type class to be present in the implicit context.
+    * And we need also to import syntax for certain operations:
+    **/
+  import cats.Monad
+  import cats.syntax.flatMap._
+  import cats.syntax.functor._ // map
 
-
-    /**
-      * Cats provides a Monad type class, as well as a number of default instances
-     **/
-    import cats.Monad
-    import cats.instances.option._
-
-    val maybeInt: Option[Int] = Monad[Option].pure(1)
-    val maybeStr: Option[String] = Monad[Option].pure("Hi")
-
-    /**
-      * When we work with a concrete Monad like List or Option we can call .flatMap .pure or .map directly.
-      * But what if we have some abstract effect F[_]?
-      * As we have seen before, we can demand an instance of a certain type class to be present in the implicit context.
-      * And we need also to import syntax for certain operations:
-     **/
-    import cats.syntax.flatMap._
-    import cats.syntax.functor._ // map
-
-    def someFancyFunc[F[_]: Monad](log: String => F[Unit], doSomethingElse: F[Unit]): F[ExitCode] =
-      log("Feels good")
-        .flatMap(_ => doSomethingElse)
-        .map(_ => ExitCode.Success)
+  def someFancyFunc[F[_]: Monad](log: String => F[Unit], doSomethingElse: F[Unit]): F[ExitCode] =
+    log("Feels good")
+      .flatMap(_ => doSomethingElse)
+      .map(_ => ExitCode.Success)
 }

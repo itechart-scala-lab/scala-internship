@@ -4,10 +4,6 @@ object Basics {
 
   // Let's start by quickly going through the basic building blocks of Scala programs.
 
-  // If you are used to using REPL on other platforms, you can use this file in Scala REPL using
-  // `sbt console` and then `import com.itechart.internship.basics.Basics._`.
-  // `sbt consoleQuick` will start REPL without compilation.
-
   // Values
 
   // A value is an immutable, typed storage unit. A value is assigned data when it is defined, but can
@@ -38,8 +34,6 @@ object Basics {
   val int3: Int = 7
   // ... or inferred by the compiler ...
   val int4 = 3
-
-  // Your IDE has features that "Add type annotation to value definition", show "Type Info" and others.
 
   // The Scala type system is rich and powerful and this section will discuss only the basics of it.
 
@@ -92,6 +86,8 @@ object Basics {
 
   // Question. What is the value of the following line?
   val floatComparisonResult: Boolean = 0.3 == 0.1 + 0.1 + 0.1
+
+  val accurateResult: BigDecimal = BigDecimal(0.1) + BigDecimal(0.1) + BigDecimal(0.1)
 
   // Double - 64-bit double-precision float
   // 4.94065645841246544e-324d to 1.79769313486231570e+308d (positive or negative)
@@ -181,7 +177,7 @@ object Basics {
   //
   // Due to the need to be compatible with legacy Java code, a special value `null` can also be assigned
   // to non-primitive values:
-  val nullString: String = null // you can also use `_` to assign the default value
+  val nullString: String = null
 
   // You shouldn't do this and should avoid using `null` in Scala code, instead preferring `Option` or other
   // more type-safe ways of indicating an absence of value. We will learn about these in future lessons.
@@ -190,8 +186,10 @@ object Basics {
 
   def artificialExample: String = if (System.getenv("test").toLowerCase == "value") "found" else "not found"
 
-  // There is a proposal for Scala 3 to improve `null` handling:
-  // https://contributors.scala-lang.org/t/sip-public-review-explicit-nulls/3889
+  val test = artificialExample
+
+  // But there is a feature for Scala 3 to improve `null` handling:
+  // https://ayushm4489.medium.com/explicit-nulls-in-scala-3-9aa9cdb6b10c
 
   // There are nine predefined types which are non-nullable (also called primitive): Boolean, Byte, Short,
   // Int, Long, Float, Double, Char, Unit.
@@ -226,27 +224,25 @@ object Basics {
   //
   // For now we are ignoring  the distinction between pure functions (without side effects) vs impure
   // functions (with side effects), methods having multiple parameter lists or type parameters.
-
-  // Exercise. Define a method "helloMethod" which returns a String "Hello, <name>!" where '<name>' is the
-  // provided String parameter 'name'.
   //
   // Try defining it using both String concatenation and interpolation.
   //
   // Note. `???` can be used to indicate code that is yet to be implemented.
-  def helloMethod(name: String): String = ???
+  def helloMethod(name: String): String = s"Hello, $name"
 
-  // Exercise. Define a method "add" which takes two integers and returns their sum.
+  // Exercise 2. Define a method "add" which takes two integers and returns their sum.
   def add(a: Int, b: Int): Int = a * 42 - b / 4 // replace with a correct implementation
 
   // You can use parameter names to specify them in a different order
   val sum1 = add(b = 2, a = 3) // addition is commutative though so it doesn't change the result
 
   // Methods can have default parameters
-  def addNTimes(x: Int, y: Int, times: Int = 1): Int = x + y * times
-  val sum2 = addNTimes(2, 3) // 5, because 2 + 3 * 1
-  val sum3 = addNTimes(2, 3, 4) // 14, because 2 + 3 * 4
+  def expr(x: Int, y: Int, times: Int = 1): Int = x + y * times
 
-  // Functions are defined with the following syntax:
+  val sum2 = expr(2, 3) // 5, because 2 + 3 * 1
+  val sum3 = expr(2, 3, 4) // 14, because 2 + 3 * 4
+
+  // Functions can be defined with the following syntax:
   //
   // val functionName: (Parameter1Type, Parameter2Type) => ReturnType = (parameter1: Parameter1Type, parameter2: Parameter2Type) => {
   //  // implementation code goes here
@@ -255,14 +251,6 @@ object Basics {
   // Note that the `: (Parameter1Type, Parameter2Type) => ReturnType` part is the type annotation and can
   // often be skipped as it is inferred by the compiler.
   //
-  // Exercise. Implement `helloFunction` using `helloMethod` you implemented above. Why was the type
-  // annotation skipped when defining `helloFunction`?
-
-  val helloFunction: String => String = (name: String) => /* implement here */ name
-
-  // Exercise. Using the aforementioned String `length` implement a `stringLength` function which returns
-  // the length of the String passed.
-  val stringLength: String => Int = (s: String) => /* implement here */ s.hashCode()
 
   // If each argument of a function is used exactly once, you can use `_` to refer to them
   val addFunction: (Int, Int) => Int = _ + _
@@ -285,8 +273,7 @@ object Basics {
     // except for temporary debugging purposes.
   }
 
-  // You won't always have to provide such a `main` method as some libraries will provide it for you, e.g.:
-  // https://typelevel.org/cats-effect/datatypes/ioapp.html
+  // You won't always have to provide such a `main` method as some libraries will provide it for you
 
   // Methods return the last expression from their implementation block.
   // While there is a `return` keyword which can do an early return it leads to code which is more difficult
