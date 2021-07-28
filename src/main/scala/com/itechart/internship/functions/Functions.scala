@@ -43,6 +43,89 @@ object Functions {
 
   // --
 
+  // Functions can be defined with the following syntax:
+  //
+  // val functionName: (Parameter1Type, Parameter2Type) => ReturnType = (parameter1: Parameter1Type, parameter2: Parameter2Type) => {
+  //  // implementation code goes here
+  // }
+  //
+  // Note that the `: (Parameter1Type, Parameter2Type) => ReturnType` part is the type annotation and can
+  // often be skipped as it is inferred by the compiler.
+  //
+
+  // If each argument of a function is used exactly once, you can use `_` to refer to them
+  val addFunction: (Int, Int) => Int = _ + _
+
+  // First occurrence of _ - it's 1st argument.
+  // Second occurrence of _ - it's 2nd argument.
+  // And etc...
+
+  // addFunction can be rewritten as:
+  val addFunctionExpanded: (Int, Int) => Int = (x, y) => x + y
+
+  // Higher order functions
+  //
+  // Functions are first class citizens and can be passed as parameters to other functions, as well as
+  // returned as return values from functions.
+
+  // Example of a function returned as a return value:
+  def greeter(intro: String): String => String = { name: String =>
+    s"$intro, $name!"
+  }
+
+  val hello: String => String = greeter("Hello")
+  val helloWorld: String = hello("World") // Hello, World!
+
+  val goodMorning: String => String = greeter("Good morning")
+  val goodMorningWorld: String = goodMorning("World") // Good morning, World!
+
+  // A more convoluted example:
+  def formatNamedDouble(name: String, format: Double => String): Double => String = { x: Double =>
+    s"$name = ${format(x)}"
+  }
+
+  val fourDecimalPlaces: Double => String = (x: Double) => f"$x%.4f"
+  val formattedNamedDouble: String = formatNamedDouble("x", fourDecimalPlaces)(Math.PI) // x = 3.1416
+
+  // Exercise. Implement `power` method which takes a Byte `n` and returns a function from Int to
+  // Long, raising the Int parameter provided to the n-th power using `Math.pow`.
+  // For conversions, use `Double#round` (for rounding Double-s to Long-s) as well as `Byte` and `Int`
+  // `toDouble` (for converting Byte-s and Int-s to Double-s).
+
+  def power(n: Byte): Int => Long = { x: Int =>
+    // implement here
+    (x + n).toLong
+  }
+
+  // Polymorphic methods, or methods which take type parameters
+  //
+  // Methods in Scala can be parameterised by types of their arguments and return values. Type parameters are
+  // enclosed in square brackets (in contrast with value parameters which are enclosed in parentheses).
+  //
+  // The function `formatNamedDouble` can be rewritten in a more general way as follows:
+
+  def formatNamedValue[A](name: String, format: A => String): A => String = { x : A =>
+    s"$name = ${format(x)}"
+  }
+
+  // Using such "parametric polymorphism" helps us do "parametric reasoning" - to reason about implementation
+  // merely by looking at type signatures.
+
+  // Using type parameters hides information from the implementation of the function. Hiding information
+  // reduces the number of possible implementations, which makes code easier to understand and reuse.
+
+  // Thus, while initially parametric polymorphisms seems to make our code more complicated, as you gain
+  // experience with it, it will often help you write simpler, more maintainable code.
+
+  val commasForThousands: Long => String = (x: Long) => f"$x%,d"
+  val formattedLong: String = formatNamedValue("y", commasForThousands)(123456) // y = 123,456
+
+  // Question: What is `A` for `formatNamedValue` in this `formattedLong` invocation of it?
+
+  // Exercise. Invoke `formatNamedValue` with a `List[String]` as `A`. You can use `_.mkString(", ")` to
+  // concatenate the list with comma as a delimiter. You can provide the `List[String]` type
+  // explicitly after the method name or for the `format` function.
+
 
   // In Scala, every concrete type is a type of some class or trait
   // `(String => String)` is the same as scala.Function1[String, String]
@@ -176,6 +259,8 @@ object Functions {
   val fromRu = translateF("ru")
   val fromRuToEn = fromRu("en")
   val result = fromRuToEn("функция")
+
+  // TODO: add tailrec
 
   // Multiple parameter lists ~ syntax sugar for functions returning a function
   def translateM(from: Language)(to: Language)(message: String): String = translate(message, from, to)
