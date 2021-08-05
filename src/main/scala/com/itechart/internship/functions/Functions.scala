@@ -4,6 +4,9 @@ import java.time.Instant
 
 object Functions {
 
+  def main(args: Array[String]): Unit = {
+  }
+
   // Functions are expressions that have parameters, and take arguments.
 
   // Functions are first-class values:
@@ -13,39 +16,15 @@ object Functions {
   // higher order functions take and/or return other functions
 
   // Example.
-  def clean(message: String): String = message.replaceAll("fox", "***")
+  def clean(message: String): String = message.replaceAll("bar", "***")
 
   def mkUpperCase(message: String): String = message.toUpperCase
-
-  // Pass our logic as a parameter `f`
-  def processText(message: String, f: String => String): String = f.apply(message)
-
-  def clean2(message: String): String = {
-    // `s` is a parameter and may be omitted
-    val f: String => String = s => s.replaceAll("fox", "***")
-    processText(message, f)
-  }
-
-  def mkUpperCase2(message: String): String = {
-    val f: String => String = _.toUpperCase
-    processText(message, f)
-  }
-
-  // Exercise.
-  // Implement `isEven` a function that checks if a number is even
-  def isEven(x: Int): Boolean = ???
-
-  // Implement `isEvenVal` which behaves exactly like `isEven`.
-  // val isEvenVal: Int => Boolean = ???
-
-  // Implement `isEvenDefToVal` by transforming `isEven` def function into a val
-  // val isEvenDefToVal: Int => Boolean = ???
 
   // --
 
   // Functions can be defined with the following syntax:
   //
-  // val functionName: (Parameter1Type, Parameter2Type) => ReturnType = (parameter1: Parameter1Type, parameter2: Parameter2Type) => {
+  // val functionName: (Param1Type, Param2Type) => ReturnType = (p1: Param1Type, p2: Param2Type) => {
   //  // implementation code goes here
   // }
   //
@@ -63,10 +42,58 @@ object Functions {
   // addFunction can be rewritten as:
   val addFunctionExpanded: (Int, Int) => Int = (x, y) => x + y
 
+  // Exercise.
+  // Implement `isEven` a function that checks if a number is even
+  def isEven(x: Int): Boolean = ???
+
+  // Implement `isEvenVal` which behaves exactly like `isEven`.
+  // val isEvenVal: Int => Boolean = ???
+
   // Higher order functions
   //
   // Functions are first class citizens and can be passed as parameters to other functions, as well as
   // returned as return values from functions.
+
+  def plain(a: Int): Int      = a
+  def cube(a: Int): Int       = a * a * a
+  def fact(a: Int): Int       = if (a == 0) 1 else a * fact(a - 1) // all control structures return value
+
+  // passing function as a parameter
+  def sumHOF(f: Int => Int, a: Int, b: Int): Int =
+    if (a > b) 0
+    else f(a) + sumHOF(f, a + 1, b)
+
+  sumHOF(plain, 1, 5)
+  sumHOF(cube, 1, 5)
+  sumHOF(fact, 1, 5)
+
+  // Carrying. Currying is a transformation of functions so that they take arguments not as sum(f, a, b),
+  // but as sum(f)(a,b)
+  def sumCarrying(f: Int => Int): (Int, Int) => Int = {
+    def sumF(a: Int, b: Int): Int = {
+      if (a > b) 0
+      else f(a) + sumF(a + 1, b)
+    }
+    sumF
+  }
+
+  sumCarrying(plain)(1, 5)
+  sumCarrying(cube)(1, 5)
+  sumCarrying(fact)(1, 5)
+
+  // Pass our logic as a parameter `f`
+  def processText(message: String, f: String => String): String = f.apply(message)
+
+  def clean2(message: String): String = {
+    // `s` is a parameter and may be omitted
+    val f: String => String = s => s.replaceAll("bar", "***")
+    processText(message, f)
+  }
+
+  def mkUpperCase2(message: String): String = {
+    val f: String => String = _.toUpperCase
+    processText(message, f)
+  }
 
   // Example of a function returned as a return value:
   def greeter(intro: String): String => String = { name: String =>
@@ -87,21 +114,19 @@ object Functions {
   val fourDecimalPlaces: Double => String = (x: Double) => f"$x%.4f"
   val formattedNamedDouble: String = formatNamedDouble("x", fourDecimalPlaces)(Math.PI) // x = 3.1416
 
-  // Exercise. Implement `power` method which takes a Byte `n` and returns a function from Int to
-  // Long, raising the Int parameter provided to the n-th power using `Math.pow`.
-  // For conversions, use `Double#round` (for rounding Double-s to Long-s) as well as `Byte` and `Int`
-  // `toDouble` (for converting Byte-s and Int-s to Double-s).
-
-  def power(n: Byte): Int => Long = { x: Int =>
-    // implement here
-    (x + n).toLong
-  }
-
   // Polymorphic methods, or methods which take type parameters
   //
   // Methods in Scala can be parameterised by types of their arguments and return values. Type parameters are
   // enclosed in square brackets (in contrast with value parameters which are enclosed in parentheses).
-  //
+
+  def processValue[A](value: A, f: A => String): String = f.apply(value)
+
+  val test1 = processValue[Double](Math.PI, x => f"$x%.4f")
+
+  final case class Person(name: String, age: Double)
+
+  val test2 = processValue[Person](Person("Vasya", 19), p => s"$p")
+
   // The function `formatNamedDouble` can be rewritten in a more general way as follows:
 
   def formatNamedValue[A](name: String, format: A => String): A => String = { x : A =>
@@ -125,7 +150,8 @@ object Functions {
   // Exercise. Invoke `formatNamedValue` with a `List[String]` as `A`. You can use `_.mkString(", ")` to
   // concatenate the list with comma as a delimiter. You can provide the `List[String]` type
   // explicitly after the method name or for the `format` function.
-
+  val lst = List("1", "2", "3")
+  val test3 = formatNamedValue[List[String]]("name", _.mkString(", "))(lst)
 
   // In Scala, every concrete type is a type of some class or trait
   // `(String => String)` is the same as scala.Function1[String, String]
