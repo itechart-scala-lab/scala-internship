@@ -132,17 +132,16 @@ object Basics {
   val string4 = s"Value of string1 is $string1 while (byte1 + short1) is ${byte1 + short1}"
   val string5 = f"Formatted strings: ${Math.PI}%.4f" // Formatted strings: 3.1416
 
-  /* Common string operations:
-    "test".length                     // 4
-    "test".take(2)                    // te
-    "test".drop(2)                    // st
-    "concatenate" + " " + "strings"   // concatenate strings
-    "test".replace("te", "rr")        // rrst
-    "test".indexOf('e')               // 1
-    "test".indexOf('z')               // -1
-    "test".indexOf("st")              // 2
-    "test" * 3                        // testtesttest
-   */
+  // Common string operations:
+  "test".length // 4
+  "test".take(2) // te
+  "test".drop(2) // st
+  "concatenate" + " " + "strings" // concatenate strings
+  "test".replace("te", "rr") // rrst
+  "test".indexOf('e') // 1
+  "test".indexOf('z') // -1
+  "test".indexOf("st") // 2
+  "test" * 3 // testtesttest
 
   // Equality
   val string6 = "abcc"
@@ -164,7 +163,7 @@ object Basics {
    */
 
   // Unit is a special type with only one possible value - `()`
-  val unit1: Unit = ()
+  val unit1:         Unit      = ()
   val allUnitValues: Set[Unit] = Set(())
 
   // Where `void` is used in Java to indicate that a method doesn't return a value,
@@ -263,12 +262,12 @@ object Basics {
   //
   // A tuple is a value that contains a fixed number of elements, each with a distinct type. Tuples are immutable.
 
-  val tuple1: (String, Double) = ("Pepper", 4.5)
+  val tuple1: (String, Double)      = ("Pepper", 4.5)
   val tuple2: (String, Double, Int) = ("Onions", 2.24, 16)
 
   // Tuples are sometimes useful but should not be over-used as their elements aren't named.
   // Tuple elements can be accessed using `._1`, `._2` and similar, for example:
-  val pepper1 = tuple1._1
+  val pepper1      = tuple1._1
   val pepperPrice1 = tuple1._2
 
   // However this should be done sparingly and instead preferring the following destructuring form:
@@ -283,7 +282,7 @@ object Basics {
   // None or an instance of Some containing a value.
 
   val nameUnknown: Option[String] = None
-  val nameKnown: Option[String] = Some("Name")
+  val nameKnown:   Option[String] = Some("Name")
 
   // Either
   //
@@ -292,31 +291,32 @@ object Basics {
   //
   // Commonly, Left is used to indicate an error while Right to indicate a normal execution.
 
-  val errorOccurred: Either[String, Int] = Left("Failed to parse")
+  val errorOccurred:   Either[String, Int] = Left("Failed to parse")
   val normalExecution: Either[String, Int] = Right(4)
 
-  // More exercises to help internalise the "types define the set of possible values that a value can have":
+  // Exercise 3 to help internalise the "types define the set of possible values that a value can have":
 
-  // Exercise. List all values of the type `Option[Boolean]`:
+  // List all values of the type `Option[Boolean]`:
   val allOptionBooleans: Set[Option[Boolean]] = Set()
 
-  // Exercise. List all values of the type `Either[Unit, Boolean]`:
+  // List all values of the type `Either[Unit, Boolean]`:
   val allEitherUnitBooleans: Set[Either[Unit, Boolean]] = Set()
 
-  // Exercise. List all values of the type `Either[Boolean, Boolean]`:
+  // List all values of the type `Either[Boolean, Boolean]`:
   val allEitherBooleanBooleans: Set[Either[Boolean, Boolean]] = Set()
 
-  // Exercise. List all values of the type `(Boolean, Boolean)`:
+  // List all values of the type `(Boolean, Boolean)`:
   val allTupleBooleanBooleans: Set[(Boolean, Boolean)] = Set()
 
-  // Question. Can we make a `Set` with all possible `Byte` values? `Double` values? `String` values?
+  // Homework. Implement functions that calculate:
 
-  // Homework. Implement functions that calculate https://en.wikipedia.org/wiki/Least_common_multiple and
-  // https://en.wikipedia.org/wiki/Greatest_common_divisor for integers.
+  // 1. fibonacci number https://en.wikipedia.org/wiki/Fibonacci_number
+  // 2. sieve of Atkin https://en.wikipedia.org/wiki/Sieve_of_Atkin
 
-  def lcm(a: Int, b: Int): Int = ???
-  def gcd(a: Int, b: Int): Int = ???
+  def fibonacci(n: Int): Int = ???
 
-  // Create a new Git Private repository for your homework solutions, use `basics` package for this homework.
+  def atkinSieve(n: Int): List[Int] = ???
+
+  // Create a new Git repository for your homework solutions, use `basics` package for this homework.
   // You can use `sbt new scala/hello-world.g8` to start a new Scala SBT project.
 }
