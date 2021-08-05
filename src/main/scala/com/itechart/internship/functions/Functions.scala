@@ -343,7 +343,7 @@ object Functions {
   // https://www.scala-exercises.org/std_lib/partially_applied_functions
 
   // Go to https://www.codewars.com/
-  // Implement 8 exercises and commit them to your repository with link to particular
+  // Implement 7 exercises and commit them to your repository with link to particular
   // task (example: https://www.codewars.com/kata/5526fc09a1bbd946250002dc/train/scala)
   // Try to make your result functions as Pure
   // Follow FP principles
