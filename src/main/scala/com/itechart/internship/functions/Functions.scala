@@ -1,11 +1,9 @@
 package com.itechart.internship.functions
 
 import java.time.Instant
+import scala.util.Try
 
 object Functions {
-
-  def main(args: Array[String]): Unit = {
-  }
 
   // Functions are expressions that have parameters, and take arguments.
 
@@ -54,18 +52,18 @@ object Functions {
   // Functions are first class citizens and can be passed as parameters to other functions, as well as
   // returned as return values from functions.
 
-  def plain(a: Int): Int      = a
-  def cube(a: Int): Int       = a * a * a
-  def fact(a: Int): Int       = if (a == 0) 1 else a * fact(a - 1) // all control structures return value
+  def plain(a: Int): Int = a
+  def cube(a:  Int): Int = a * a * a
+  def fact(a:  Int): Int = if (a == 0) 1 else a * fact(a - 1) // all control structures return value
 
   // passing function as a parameter
   def sumHOF(f: Int => Int, a: Int, b: Int): Int =
     if (a > b) 0
     else f(a) + sumHOF(f, a + 1, b)
 
-  sumHOF(plain, 1, 5)
-  sumHOF(cube, 1, 5)
-  sumHOF(fact, 1, 5)
+  println(sumHOF(plain, 1, 5))
+  println(sumHOF(cube, 1, 5))
+  println(sumHOF(fact, 1, 5))
 
   // Carrying. Currying is a transformation of functions so that they take arguments not as sum(f, a, b),
   // but as sum(f)(a,b)
@@ -77,9 +75,9 @@ object Functions {
     sumF
   }
 
-  sumCarrying(plain)(1, 5)
-  sumCarrying(cube)(1, 5)
-  sumCarrying(fact)(1, 5)
+  println(sumCarrying(plain)(1, 5))
+  println(sumCarrying(cube)(1, 5))
+  println(sumCarrying(fact)(1, 5))
 
   // Pass our logic as a parameter `f`
   def processText(message: String, f: String => String): String = f.apply(message)
@@ -100,19 +98,19 @@ object Functions {
     s"$intro, $name!"
   }
 
-  val hello: String => String = greeter("Hello")
-  val helloWorld: String = hello("World") // Hello, World!
+  val hello:      String => String = greeter("Hello")
+  val helloWorld: String           = hello("World") // Hello, World!
 
-  val goodMorning: String => String = greeter("Good morning")
-  val goodMorningWorld: String = goodMorning("World") // Good morning, World!
+  val goodMorning:      String => String = greeter("Good morning")
+  val goodMorningWorld: String           = goodMorning("World") // Good morning, World!
 
   // A more convoluted example:
   def formatNamedDouble(name: String, format: Double => String): Double => String = { x: Double =>
     s"$name = ${format(x)}"
   }
 
-  val fourDecimalPlaces: Double => String = (x: Double) => f"$x%.4f"
-  val formattedNamedDouble: String = formatNamedDouble("x", fourDecimalPlaces)(Math.PI) // x = 3.1416
+  val fourDecimalPlaces:    Double => String = (x: Double) => f"$x%.4f"
+  val formattedNamedDouble: String           = formatNamedDouble("x", fourDecimalPlaces)(Math.PI) // x = 3.1416
 
   // Polymorphic methods, or methods which take type parameters
   //
@@ -129,7 +127,7 @@ object Functions {
 
   // The function `formatNamedDouble` can be rewritten in a more general way as follows:
 
-  def formatNamedValue[A](name: String, format: A => String): A => String = { x : A =>
+  def formatNamedValue[A](name: String, format: A => String): A => String = { x: A =>
     s"$name = ${format(x)}"
   }
 
@@ -143,6 +141,7 @@ object Functions {
   // experience with it, it will often help you write simpler, more maintainable code.
 
   val commasForThousands: Long => String = (x: Long) => f"$x%,d"
+
   val formattedLong: String = formatNamedValue("y", commasForThousands)(123456) // y = 123,456
 
   // Question: What is `A` for `formatNamedValue` in this `formattedLong` invocation of it?
@@ -151,6 +150,8 @@ object Functions {
   // concatenate the list with comma as a delimiter. You can provide the `List[String]` type
   // explicitly after the method name or for the `format` function.
   val lst = List("1", "2", "3")
+
+  // TODO: remove before lection
   val test3 = formatNamedValue[List[String]]("name", _.mkString(", "))(lst)
 
   // In Scala, every concrete type is a type of some class or trait
@@ -173,84 +174,76 @@ object Functions {
   // Syntax sugar allows to call a function w/o typing `apply`
   // `f.apply(..)` becomes `f(..)`
 
-  // We can write a function w/o giving a name
-  processText("some text", _ + "!!")
+  // We can write a function without giving a name
+  val test4 = processText("some text", _ + "!!")
 
   // Anonymous function expands to implementation of scala.Function1 trait
-  processText("some text", new Function1[String, String] {
-    override def apply(v1: String): String = v1 + "!!"
-  })
+
+  val test5 = processText(
+    message = "some text",
+    f = new Function1[String, String] {
+      override def apply(v1: String): String = v1 + "!!"
+    }
+  )
 
   // Method can be passed as a function, but it is not a function value, it's just converted automatically
   def trimAndWrap(v: String): String = s"<${v.trim}>"
 
-  processText("xxx", trimAndWrap)
-
-
-  // Subclassing Functions
-  // One nice aspect of functions being traits is that we can subclass the function type
-
-  trait MyMap[K, V] extends (K => V)
-
-  // Question. What should we extend to ..
-
-  // check if an element belongs to a set
-  // > trait MySet[A] extends ???
-
-  // return a value by its index
-  // > trait MySeq[A] extends ???
+  val test6 = processText("xxx", trimAndWrap)
 
   // --
 
   // Polymorphic functions has at least one type parameter
   // A type parameter is a form of encapsulation
 
-  def x[T](v: T) = ???
+  def polymorphicFunction[T](v: T) = println(v)
 
-  // Exercise.
-  // Implement `mapOption` a function. Do not use scala option api
-  def mapOption[A, B](option: Option[A], f: A => B): Option[B] = ???
+  polymorphicFunction[Double](3.14)
+  polymorphicFunction[String]("str")
 
   // --
 
-  // Functions composition
+  // Function composition
 
-  val strToInt: String => Int = _.length
+  val strToInt:  String => Int  = _.length
   val intToBool: Int => Boolean = _ > 10
 
   val strToBool1: String => Boolean = t => intToBool(strToInt(t))
   val strToBool2: String => Boolean = intToBool.compose(strToInt)
   val strToBool3: String => Boolean = strToInt.andThen(intToBool)
 
+  val test7 = strToBool1("test7")
+  val test8 = strToBool1("test7")
+  val test9 = strToBool1("test7")
+
   // --
 
   // The pattern matching block expands to the Function1 instance
-  val pingPong: String => String = {
-    case "ping" => "pong"
+  val pingPong: String => String = { case "ping" =>
+    "pong"
   }
 
   // Question. What happens next?
-  // > pingPong("hi?")
+  // pingPong("hi?")
 
   // With the function type itself we cannot find out beforehand
   // whether the function is applicable to a certain argument
 
   // Partial functions is another trait which extends Function and has `isDefinedAt` method
 
-  val pingPongPF: PartialFunction[String, String] = {
-    case "ping" => "pong"
+  val pingPongPF: PartialFunction[String, String] = { case "ping" =>
+    "pong"
   }
 
   pingPongPF.isDefinedAt("ping") // > true
   pingPongPF.isDefinedAt("hi") // > false
-
 
   // If expected type is a PF then a pattern matching block will expended to PF implementation
 
   val pingPongPFImpl: PartialFunction[String, String] = new PartialFunction[String, String] {
     override def isDefinedAt(x: String): Boolean = x match {
       case "ping" => true
-      case _ => false
+      case _      => false
     }
 
     override def apply(v: String): String = v match {
@@ -262,34 +255,10 @@ object Functions {
   val eithers: Seq[Either[String, Double]] = List("123", "456", "789o")
     .map(x => x.toDoubleOption.toRight(s"Failed to parse $x"))
 
-  val errors: Seq[String] = eithers.collect {
-    case Left(x) => x
+  // function `collect` receives PartialFunction
+  val errors: Seq[String] = eithers.collect { case Left(x) =>
+    x
   }
-
-  // We can make a function that returns another function
-  // Example.
-  type Language = String
-
-  def translate(message: String, from: Language, to: Language): String = {
-    // some logic
-    if (from == to) message else message.reverse
-  }
-
-  val translateFromRus: (Language, String) => String =
-    (to: String, message: Language) => translate(message, "rus", to)
-
-  // `=>` has right associative law
-  val translateF: Language => (Language => (String => String)) =
-    (from: Language) => (to: Language) => (message: String) => translate(message, from, to)
-
-  val fromRu = translateF("ru")
-  val fromRuToEn = fromRu("en")
-  val result = fromRuToEn("функция")
-
-  // TODO: add tailrec
-
-  // Multiple parameter lists ~ syntax sugar for functions returning a function
-  def translateM(from: Language)(to: Language)(message: String): String = translate(message, from, to)
 
   // --
 
@@ -327,7 +296,6 @@ object Functions {
 
   // A function without side effects only returns a value
 
-
   // Exercise. Provide an example of pure functions
   // Question. If a function return for all inputs the same value, is this function pure?
 
@@ -339,33 +307,44 @@ object Functions {
   // Potential compiler optimisations
   // Make parallel processing easier
 
-
   // Exercises. Convert the following function into a pure function.
   type ??? = Nothing // just to make it compile and indicate that return type should be changed
 
   //
   def parseDate(s: String): Instant = Instant.parse(s)
-  def parseDatePure(s: String): ??? = ???
+
+  // TODO: clean up before lection
+  // def parseDatePure(s: String): ??? = ???
+  def parseDatePure(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
+
+  val date1 = parseDatePure(Instant.now.toString)
+  val data2 = parseDatePure("dkfjsdkfj")
 
   //
   def divide(a: Int, b: Int): Int = a / b
-  def dividePure(a: Int, b: Int): ??? = ???
 
-  //
-  def isAfterNow(date: Instant): Boolean = date.isAfter(Instant.now())
-  def isAfterNowPure(/* ??? */): Boolean = ???
+  // def dividePure(a: Int, b: Int): ??? = ???
+  def dividePure(a: Int, b: Int): Option[Int] = Try(a / b).toOption
 
-  //
-  case class Nel[T](head: T, rest: List[T])
-  def nel[T](list: List[T]): Nel[T] = {
-    if (list.isEmpty) println("ERROR: provide non empty list")
-    Nel(list.head, list.tail)
-  }
-  def nelPure[T](list: List[T]): ??? = ???
+  val division1 = dividePure(5, 2)
+  val division2 = dividePure(5, 0)
+
+  println("")
+
+  def main(args: Array[String]): Unit = {}
 
   // --
 
-  // Additional exercises:
+  // Homework:
+
   // https://www.scala-exercises.org/std_lib/higher_order_functions
   // https://www.scala-exercises.org/fp_in_scala/getting_started_with_functional_programming
+  // https://www.scala-exercises.org/std_lib/partial_functions
+  // https://www.scala-exercises.org/std_lib/partially_applied_functions
+
+  // Go to https://www.codewars.com/
+  // Implement 8 exercises and commit them to your repository with link to particular
+  // task (example: https://www.codewars.com/kata/5526fc09a1bbd946250002dc/train/scala)
+  // Try to make your result functions as Pure
+  // Follow FP principles
 }

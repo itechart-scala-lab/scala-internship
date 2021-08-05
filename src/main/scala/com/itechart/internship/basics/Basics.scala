@@ -132,7 +132,8 @@ object Basics {
   val string4 = s"Value of string1 is $string1 while (byte1 + short1) is ${byte1 + short1}"
   val string5 = f"Formatted strings: ${Math.PI}%.4f" // Formatted strings: 3.1416
 
-  // Common string operations:
+  /* Common string operations:
+
   "test".length // 4
   "test".take(2) // te
   "test".drop(2) // st
@@ -142,6 +143,8 @@ object Basics {
   "test".indexOf('z') // -1
   "test".indexOf("st") // 2
   "test" * 3 // testtesttest
+
+   */
 
   // Equality
   val string6 = "abcc"
