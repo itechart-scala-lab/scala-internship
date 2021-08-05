@@ -5,7 +5,7 @@ object ClassesAndTraits {
   // Classes in Scala are blueprints for creating object instances. They can contain methods, values,
   // variables, types, objects, traits, and classes which are collectively called members.
 
-  class MutablePoint(var x: Double, var y: Double) {
+  class MovableLocation(var x: Double, var y: Double) {
     def move(dx: Double, dy: Double): Unit = {
       x = x + dx
       y = y + dy
@@ -21,15 +21,18 @@ object ClassesAndTraits {
   //
   // Use it to contain methods and values related to this trait or class, but that aren't
   // specific to instances of this trait or class.
-  object MutablePoint {
-    def apply(x: Double, y: Double): MutablePoint = new MutablePoint(x, y)
+  object MovableLocation {
+    def apply(x: Double, y: Double): MovableLocation = new MovableLocation(x, y)
 
-    def unapply(point: MutablePoint): Option[(Double, Double)] = Option((point.x, point.y))
+    def unapply(point: MovableLocation): Option[(Double, Double)] = Option((point.x, point.y))
   }
 
-  val point1 = new MutablePoint(3, 4)
-  println(point1.x) // 3.0
-  println(point1) // (3.0, 4.0)
+  val location1 = new MovableLocation(3, 4)
+  println(location1.x) // 3.0
+  println(location1) // (3.0, 4.0)
+
+  location1.move(1, 2)
+  println(location1) // 4.0, 6.0
 
   // Question. Is MutablePoint a good design? Why or why not?
 
@@ -47,35 +50,23 @@ object ClassesAndTraits {
   //
   // This makes code more reusable and testable.
 
-  sealed trait Shape extends Located with Bounded
-
   sealed trait Located {
     def x: Double
     def y: Double
   }
 
-  sealed trait Bounded {
-    def minX: Double
-    def maxX: Double
-    def minY: Double
-    def maxY: Double
+  sealed trait Movable {
+    def move(dx: Double, dy: Double): Vehicle
   }
 
-  final case class Point(x: Double, y: Double) extends Shape {
-    override def minX: Double = x
-    override def maxX: Double = x
-    override def minY: Double = y
-    override def maxY: Double = y
+  sealed trait Vehicle extends Located with Movable
+
+  final case class GroundVehicle(x: Double, y: Double, weight: Double) extends Vehicle {
+    override def move(dx: Double, dy: Double): Vehicle = GroundVehicle(x + dx, y + dy, weight)
   }
 
-  final case class Circle(centerX: Double, centerY: Double, radius: Double) extends Shape {
-    override def x: Double    = ???
-    override def y: Double    = ???
-    override def minX: Double = ???
-    override def maxX: Double = ???
-    override def minY: Double = ???
-    override def maxY: Double = ???
-  }
+  // Exercise: implement Ship case class which will extend Vehicle and contain new property `displacement`
+  // final case class Ship()
 
   // Case Classes
   //
@@ -96,59 +87,36 @@ object ClassesAndTraits {
   // When declaring a case class, make it final. Otherwise someone may decide to inherit from it
   // case-to-case inheritance is prohibited
 
-  val point2 = Point(1, 2)
-  println(point2.x)
+  val groundVehicle1 = GroundVehicle(1, 2, 3500)
+  println(groundVehicle1.x)
 
-  val shape: Shape = point2
-  val point2Description = shape match {
-    case Point(x, y) => s"x = $x, y = $y"
-    case _           => "other shape"
+  val groundVehicle2: Vehicle = groundVehicle1
+  val groundVehicleDesc = groundVehicle2 match {
+    case GroundVehicle(x, y, weight) => s"x = $x, y = $y, weight = $weight kg"
+    case _                           => "other vehicle"
   }
 
-  val point3 = point2.copy(x = 3)
-  println(point3.toString) // Point(3, 2)
-
-  // Exercise. Implement an algorithm for finding the minimum bounding rectangle
-  // (https://en.wikipedia.org/wiki/Minimum_bounding_rectangle) for a set of `Bounded` objects.
-  //
-  def minimumBoundingRectangle(objects: Set[Bounded]): Bounded =
-    new Bounded {
-      implicit private val doubleOrdering: Ordering[Double] = Ordering.Double.IeeeOrdering
-
-      // if needed, fix the code to be correct
-      override def minX: Double = objects.map(_.minX).min
-      override def maxX: Double = objects.map(_.minX).min
-      override def minY: Double = objects.map(_.minX).min
-      override def maxY: Double = objects.map(_.minX).min
-    }
+  val groundVehicle3 = groundVehicle1.copy(x = 3)
+  println(groundVehicle3.toString) // GroundVehicle(3, 2)
 
   // Pattern matching and exhaustiveness checking
-  def describe(x: Shape): String = x match {
-    case Point(x, y)                      => s"Point(x = $x, y = $y)"
-    case Circle(centerX, centerY, radius) => s"Circle(centerX = $centerX, centerY = $centerY, radius = $radius)"
+
+  //  final case class Bike() extends Vehicle {
+  //    override def move(dx: Double, dy: Double): Vehicle = ???
+  //    override def x: Double = ???
+  //    override def y: Double = ???
+  //  }
+
+  def describe(x: Vehicle): String = x match {
+    case GroundVehicle(x, y, weight) => s"GroundVehicle(x = $x, y = $y, weight = $weight)"
+    //case Ship(x, y, displacement)  => s"Ship(x = $x, y = $y, displacement = $displacement)"
   }
 
   // Singleton can extend classes and mix in traits
-  object Origin extends Located {
+  object OriginLocation extends Located {
     override def x: Double = 0
     override def y: Double = 0
   }
-
-  object Bounded {
-    def minimumBoundingRectangle(objects: Set[Bounded]): Bounded = ???
-  }
-
-  // Exercise. Add another Shape class called Rectangle and check that the compiler catches that we are
-  // missing code to handle it in `describe`.
-
-  // Let us come back to our `Shape`-s and add a `Movable` trait
-  // which will have a method:
-  //
-  //   def move(dx: Double, dy: Double)
-  //
-  // How should we implement `move` for various types?
-  //
-  // What should be the return type of the `move` method in `Shape`? In `Point` and other sub-types?
 
   // Generic classes and type parameters
 
@@ -156,25 +124,23 @@ object ClassesAndTraits {
   // For example, you can define a `Stack[A]` which works with any type of element `A`.
 
   // Question. Do you agree with how the stack is modelled here? What would you do differently?
+
   final case class Stack[A](elements: List[A] = Nil) {
     def push(x: A): Stack[A] = ???
-    def peek: A              = ???
-    def pop: (A, Stack[A])   = ???
+    def peek: A             = ???
+    def pop:  (A, Stack[A]) = ???
   }
 
-  // Homework
-  //
-  // Add additional 2D shapes such as triangle and square.
-  //
-  // In addition to the 2D shapes classes, add also 3D shapes classes
-  // (origin, point, sphere, cube, cuboid, 3D triangle - you can add
-  // others if you think they are a good fit).
-  //
-  // Add method `area` to 2D shapes.
-  //
-  // Add methods `surfaceArea` and `volume` to 3D shapes.
-  //
-  // If some of the implementation involves advanced math, it is OK
-  // to skip it (leave unimplemented), the primary intent of this
-  // exercise is modelling using case classes and traits, and not math.
+  // TODO: remove before lection
+  final case class StackEnhanced[A](elements: List[A] = Nil) {
+    def push(x: A): Stack[A] = Stack(x :: elements)
+    def peek: Option[A] = elements.headOption
+
+    def pop: Option[(A, Stack[A])] = elements match {
+      case Nil     => None
+      case x :: xs => Some(x, Stack(xs))
+    }
+  }
+
+  def main(args: Array[String]): Unit = {}
 }
