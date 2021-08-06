@@ -342,9 +342,21 @@ object Functions {
   // https://www.scala-exercises.org/std_lib/partial_functions
   // https://www.scala-exercises.org/std_lib/partially_applied_functions
 
-  // Go to https://www.codewars.com/
-  // Implement 7 exercises and commit them to your repository with link to particular
+  // Register an account on https://www.codewars.com/ select Scala as programming language
+  // Implement listed exercises and commit them to your repository with link to particular
   // task (example: https://www.codewars.com/kata/5526fc09a1bbd946250002dc/train/scala)
-  // Try to make your result functions as Pure
-  // Follow FP principles
+  // Follow FP principles, your functions must be pure (take a look on the rules of pure functions)
+
+  // Exercises
+  // https://www.codewars.com/kata/555eded1ad94b00403000071/train/scala
+  // https://www.codewars.com/kata/525f50e3b73515a6db000b83/train/scala
+  // https://www.codewars.com/kata/526571aae218b8ee490006f4/train/scala
+  // https://www.codewars.com/kata/550498447451fbbd7600041c/train/scala
+  // https://www.codewars.com/kata/57eb8fcdf670e99d9b000272/train/scala
+  // https://www.codewars.com/kata/51ba717bb08c1cd60f00002f/train/scala
+  // https://www.codewars.com/kata/556deca17c58da83c00002db/train/scala
+
+  // Optional
+  // *  https://www.codewars.com/kata/529bf0e9bdf7657179000008/train/scala
+
 }
