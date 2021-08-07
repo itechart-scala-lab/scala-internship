@@ -1,9 +1,10 @@
 package com.itechart.internship.error_handling
 
 import scala.concurrent.Future
+import scala.util.Try
 import scala.util.control.NonFatal
 
-object ErrorHandling extends App {
+object ErrorHandling {
 
   // ERROR HANDLING
 
@@ -54,8 +55,9 @@ object ErrorHandling extends App {
   // Option is the simplest possible mechanism for handling errors in Scala. Use Option when only one thing
   // can go wrong or there is no interest in a particular reason for a failure.
 
-  // Exercise. Implement `parseIntOption` method.
-  def parseIntOption(string: String): Option[Int] = ???
+  def parseIntOption(string: String): Option[Int] = Try(Integer.parseInt(string)).toOption
+
+  // string.toIntOption
 
   // The downside of Option is that it does not encode any information about what exactly went wrong. It only
   // states the mere fact that it did.
@@ -67,29 +69,14 @@ object ErrorHandling extends App {
   // Either is a more powerful alternative to Option. It not only encodes the fact that something went wrong,
   // but also provides means to carry a particular reason that has caused the issue.
 
-  // Exercise. Implement `parseIntEither` method, returning the parsed integer as `Right` upon success and
+  // Exercise 1. Implement `parseIntEither` method, returning the parsed integer as `Right` upon success and
   // "{{string}} does not contain an integer" as `Left` upon failure.
   def parseIntEither(string: String): Either[String, Int] = ???
 
-  // As an alternative to `String`, a proper ADT can be introduced to formalize all error cases. As discussed
-  // in `AlgebraicDataTypes` section, this provides a number of benefits, including an exhaustiveness check
-  // at compile time, so one can be sure all error cases are handled.
-  //
-  // Note that this is a superficial example. Always think how detailed you want your error cases to be.
-  sealed trait TransferError
-  object TransferError {
-    /** Returned when amount to credit is negative. */
-    final case object NegativeAmount extends TransferError
-    /** Returned when amount to credit is zero. */
-    final case object ZeroAmount extends TransferError
-    /** Returned when amount to credit is equal or greater than 1 000 000. */
-    final case object AmountIsTooLarge extends TransferError
-    /** Returned when amount to credit is within the valid range, but has more than 2 decimal places. */
-    final case object TooManyDecimals extends TransferError
-  }
-  // Exercise. Implement `credit` method, returning `Unit` as `Right` upon success and the appropriate
-  // `TransferError` as `Left` upon failure.
-  def credit(amount: BigDecimal): Either[TransferError, Unit] = ???
+  // TODO: remove before workshop
+  def parseIntEither1(string: String): Either[String, Int] =
+    Try(Integer.parseInt(string)).toEither.left
+      .map(e => e.getMessage)
 
   // `Either[Throwable, A]` is similar to `Try[A]`. However, because `Try[A]` has its error channel hardcoded
   // to a specific type and `Either[L, R]` does not, `Try[A]` provides more specific methods to deal with
@@ -98,6 +85,48 @@ object ErrorHandling extends App {
   // Note that only non-fatal exceptions are caught by the combinators on Try. Serious system errors, on the
   // other hand, will be thrown. To distinguish between fatal and non-fatal exceptions, Try follows the same
   // principles as `NonFatal`, covered above.
+
+  // -
+
+  // As an alternative to `String`, a proper ADT can be introduced to formalize all error cases. As discussed
+  // in `AlgebraicDataTypes` section, this provides a number of benefits, including an exhaustiveness check
+  // at compile time, so one can be sure all error cases are handled.
+  //
+  // Note that this is a superficial example. Always think how detailed you want your error cases to be.
+  sealed trait TransferError
+  object TransferError {
+
+    /** Returned when amount to credit is negative. */
+    final case object NegativeAmount extends TransferError
+
+    /** Returned when amount to credit is zero. */
+    final case object ZeroAmount extends TransferError
+
+    /** Returned when amount to credit is equal or greater than 1 000 000. */
+    final case object AmountIsTooLarge extends TransferError
+
+    /** Returned when amount to credit is within the valid range, but has more than 2 decimal places. */
+    final case object TooManyDecimals extends TransferError
+  }
+  // Exercise. Implement `credit` method, returning `Unit` as `Right` upon success and the appropriate
+  // `TransferError` as `Left` upon failure.
+  import TransferError._
+
+  def validateCredit(amount: BigDecimal): Either[TransferError, BigDecimal] = amount match {
+    case a if a < 0        => Left(NegativeAmount)
+    case a if a == 0       => Left(ZeroAmount)
+    case a if a >= 1000000 => Left(AmountIsTooLarge)
+    case a if a.scale > 2  => Left(TooManyDecimals)
+    case _                 => Right(amount)
+  }
+
+  val c1 = validateCredit(BigDecimal(-2))
+  val c2 = validateCredit(BigDecimal(0))
+  val c3 = validateCredit(1000001)
+  val c4 = validateCredit(1000.2345)
+  val c5 = validateCredit(100.25)
+
+  println()
 
   // VALIDATED
 
@@ -132,47 +161,53 @@ object ErrorHandling extends App {
   import cats.data.ValidatedNec
   import cats.syntax.all._
 
-  object StudentValidator {
+  import ValidationError._
 
-    import ValidationError._
+  // `AllErrorsOr[A]` contains either non-empty Chain of validation errors or a value, if validation has
+  // succeeded. It can be thought of as an error-accumulating version of Either.
+  //
+  // Chain is another data type from Cats library. It is similar to List, but supports both constant time
+  // append and prepend (Scala's List offers only constant time prepend). Therefore it is a better fit for
+  // usage with Validated, where errors are often accumulated by appending them.
+  type AllErrorsOr[A] = ValidatedNec[ValidationError, A]
 
-    // `AllErrorsOr[A]` contains either non-empty Chain of validation errors or a value, if validation has
-    // succeeded. It can be thought of as an error-accumulating version of Either.
-    //
-    // Chain is another data type from Cats library. It is similar to List, but supports both constant time
-    // append and prepend (Scala's List offers only constant time prepend). Therefore it is a better fit for
-    // usage with Validated, where errors are often accumulated by appending them.
-    type AllErrorsOr[A] = ValidatedNec[ValidationError, A]
+  private def validateUsername(username: String): AllErrorsOr[String] = {
 
-    private def validateUsername(username: String): AllErrorsOr[String] = {
+    def validateUsernameLength: AllErrorsOr[String] =
+      if (username.length >= 3 && username.length <= 30) username.validNec
+      else UsernameLengthIsInvalid.invalidNec
 
-      def validateUsernameLength: AllErrorsOr[String] =
-        if (username.length >= 3 && username.length <= 30) username.validNec
-        else UsernameLengthIsInvalid.invalidNec
+    def validateUsernameContents: AllErrorsOr[String] =
+      if (username.matches("^[a-zA-Z]+$")) username.validNec
+      else UsernameHasSpecialCharacters.invalidNec
 
-      def validateUsernameContents: AllErrorsOr[String] =
-        if (username.matches("^[a-zA-Z0-9]+$")) username.validNec
-        else UsernameHasSpecialCharacters.invalidNec
-
-      // `productR` method (can also be written as *>) accumulates both username related errors into a single
-      // `AllErrorsOr[String]`. However, it ignores the result of the validator on the left and uses only the
-      // result of the validator on the right (hence the `R` suffix).
-      validateUsernameLength.productR(validateUsernameContents)
-    }
-
-    // Exercise. Implement `validateAge` method, so that it returns `AgeIsNotNumeric` if the age string is not
-    // a number and `AgeIsOutOfBounds` if the age is not between 18 and 75. Otherwise the age should be
-    // considered valid and returned inside `AllErrorsOr`.
-    private def validateAge(age: String): AllErrorsOr[Int] = ???
-
-    // `validate` method takes raw username and age values (for example, as received via POST request),
-    // validates them, transforms as needed and returns `AllErrorsOr[Student]` as a result. `mapN` method
-    // allows to map other N Validated instances at the same time.
-    def validate(username: String, age: String): AllErrorsOr[Student] =
-      (validateUsername(username), validateAge(age)).mapN(Student)
+    // `productR` method (can also be written as *>) accumulates both username related errors into a single
+    // `AllErrorsOr[String]`. However, it ignores the result of the validator on the left and uses only the
+    // result of the validator on the right (hence the `R` suffix).
+    validateUsernameLength *> validateUsernameContents
   }
 
-  // HANDLING ERRORS IN A FUNCTIONAL WAY
+  val u1 = validateUsername("ab")
+  val u2 = validateUsername("Vasya1")
+  val u3 = validateUsername("v1")
+  val u4 = validateUsername("Vasya")
+
+  println()
+
+  // Exercise 2. Implement `validateAge` method, so that it returns `AgeIsNotNumeric` if the age string is not
+  // a number and `AgeIsOutOfBounds` if the age is not between 18 and 75. Otherwise the age should be
+  // considered valid and returned inside `AllErrorsOr`.
+  private def validateAge(age: String): AllErrorsOr[Int] = ???
+
+  // `validate` method takes raw username and age values (for example, as received via POST request),
+  // validates them, transforms as needed and returns `AllErrorsOr[Student]` as a result. `mapN` method
+  // allows to map other N Validated instances at the same time.
+  def validate(username: String, age: String): AllErrorsOr[Student] =
+    (validateUsername(username), validateAge(age)).mapN(Student)
+
+  // -
+
+  // Conclusion for topic: 'HANDLING ERRORS IN A FUNCTIONAL WAY'
 
   // 1. Method signatures should not lie about recoverable errors
 
@@ -219,36 +254,12 @@ object ErrorHandling extends App {
   // the same result.
   type FutureEither[E, A] = Future[Either[E, A]]
 
-  // Homework. Place the solution under `error_handling` package in your homework repository.
-  //
-  // 1. Model `PaymentCard` class as an ADT (protect against invalid data as much as it makes sense).
-  // 2. Add `ValidationError` cases (at least 5, may be more).
-  // 3. Implement `validate` method to construct `PaymentCard` instance from the supplied raw data.
-  object Homework {
-
-    case class PaymentCard(/* Add parameters as needed */)
-
-    sealed trait ValidationError
-    object ValidationError {
-      ??? // Add errors as needed
-    }
-
-    object PaymentCardValidator {
-
-      type AllErrorsOr[A] = ValidatedNec[ValidationError, A]
-
-      def validate(
-        name: String,
-        number: String,
-        expirationDate: String,
-        securityCode: String,
-      ): AllErrorsOr[PaymentCard] = ???
-    }
-  }
+  def main(args: Array[String]): Unit = {}
 
   // Attributions and useful links:
   // https://www.lihaoyi.com/post/StrategicScalaStylePrincipleofLeastPower.html#error-handling
   // https://www.geeksforgeeks.org/scala-exception-handling/
   // https://typelevel.org/cats/datatypes/validated.html
   // https://blog.ssanj.net/posts/2019-08-18-using-validated-for-error-accumulation-in-scala-with-cats.html
+  // https://ayushm4489.medium.com/pareeksha-scala-validation-library-e8f4d733566b
 }
