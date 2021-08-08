@@ -214,4 +214,147 @@ object DataStructures {
   // Input `Map("a" -> 1, "b" -> 2, "c" -> 4, "d" -> 1, "e" -> 0, "f" -> 2, "g" -> 2)` should result in
   // output `List(Set("e") -> 0, Set("a", "d") -> 1, Set("b", "f", "g") -> 2, Set("c") -> 4)`.
   def sortConsideringEqualValues[T](map: Map[T, Int]): List[(Set[T], Int)] = ???
+
+
+  /**
+    * Exploring Functional Sets
+     */
+
+  val aSet = Set(1,2,3,4,5)
+
+/*
+  The critical API of a set consists of
+
+  * the ability to tell whether an item is in the set or not
+  * the ability to add an element to a set (and if it exists, don’t add it again)
+  * the ability to remove an element from the set (and if it doesn’t exist, don’t remove it again, of course)
+*/
+
+//  Let’s concentrate on the first capability at the moment. The way we tell whether an element is in the set is by calling contains, or apply:
+
+  aSet.contains(2) // true
+  aSet(2) // also true
+
+/*
+  Notice that the apply method makes the set “callable” like a function.
+  At the same time, that invocation always returns a value (true or false), for any argument you pass to it.
+
+  So notice that a set behaves like a function A => Boolean, because you can pass any argument of type A, and you’ll get a Boolean (whether or not the argument is in the set).
+
+  Here’s an outrageous idea: sets ARE functions!
+
+  If you dive deeper into the Set definition from the standard library, you’ll eventually find a declaration that fits:
+
+  trait Set[A] extends Iterable[A]
+    with collection.Set[A]
+    with SetOps[A, Set, Set[A]]
+    with IterableFactoryDefaults[A, Set] {
+    ...
+  }
+
+  // in the scala.collection.immutable package
+
+  trait SetOps[A, +CC[X], +C <: SetOps[A, CC, C]]
+    extends collection.SetOps[A, CC, C] {
+    ...
+  }
+
+  // in the general scala.collection package
+
+  trait SetOps[A, +CC[_], +C <: SetOps[A, CC, C]]
+    extends IterableOps[A, CC, C]
+      with (A => Boolean) { // <-- jackpot!
+    ...
+  }*/
+
+  /**
+    * Writing a Small Functional Set
+    */
+
+//  Here’s a small experiment — let’s write a small implementation of a set that implements the functional interface A => Boolean:
+
+  trait RSet[A] extends (A => Boolean) {
+    def apply(x: A): Boolean = contains(x)
+    def contains(x: A): Boolean
+    def +(x: A): RSet[A]
+    def -(x: A): RSet[A]
+  }
+
+/*
+  The main trait implements the crucial Set API:
+
+  * testing if an element is in the set
+  * adding an element
+  * removing an element
+
+  Let’s then continue with an implementation of an empty set, correctly typed.
+  The standard library uses an object typed with Set[Any] and then type-checked via casting, but let’s use a small case class for our experiment:
+*/
+
+  case class REmpty[A]() extends RSet[A] {
+    override def contains(x: A) = false
+    def +(x: A): RSet[A] = ???
+    def -(x: A): RSet[A] = this
+  }
+
+  /*
+  The implementation of 2 out of 3 methods is easy:
+
+  * the set doesn’t contain anything, so contains(x) == false for all x in A
+  * the set can’t remove anything, so return the same set
+  We’ll come back to the third method shortly.
+
+  Let’s now consider a set given by a property, i.e. similarly to how we were taught in math classes.
+  For example, the set of all even natural numbers is something like { x in N | x % 2 == 0 }.
+  Pure sets in mathematics are described by their properties.
+  Some sets may be finite, or infinite, some may be countable (or not).
+
+  We’re not going to dive super-deep into the rabbit hole — that’s a job for my students in the advanced Scala course — but let’s try declaring a small set in terms of the property of their elements (a property-based set):
+*/
+
+  case class PBSet[A](property: A => Boolean) extends RSet[A] {
+    def contains(x: A): Boolean = property(x)
+    def +(x: A): RSet[A] = new PBSet[A](e => property(e) || e == x)
+    def -(x: A): RSet[A] = if (contains(x)) new PBSet[A](e => property(e) && e != x) else this
+  }
+
+/*
+  Let’s look at the main API methods:
+
+  * this set is all about the property of the elements, so contains returns true only if that property is satisfied
+  * adding an element means adjusting the property so that it also holds true for the element we want to add
+  * removing an element means adjusting the property so that it definitely returns false for the element we’re removing
+  And that’s it! The set will not contain duplicates nor change if we try removing a non-existent element, because neither makes any sense now.
+
+  Coming back to REmpty’s add method, it will look like this:
+  def +(x: A): RSet[A] = new PBSet[A](_ == x)
+
+  A single-element set is a property-based set, where the property only returns true for that particular element.
+
+  Of course, we can test this out. Let’s make a small helper method that will allow us to build sets more easily:
+*/
+
+  object RSet {
+    def apply[A](values: A*) = values.foldLeft[RSet[A]](new REmpty())(_ + _)
+  }
+/*
+  Then in main, we can run some tests:
+
+  val first5Elements: RSet[Int] = REmpty[Int]() + 1 + 2 + 3 + 4 + 5
+  val first5lementsFancy = RSet(1,2,3,4,5)
+  val first1000Elements = RSet(1 to 1000: _*) // pass as varargs
+
+  first5Elements(42) // false
+  first5lementsFancy(3) // true
+  first1000Elements(68) // true
+
+  Is this cool or what?
+
+  The interesting thing about this set definition is that you can now declare infinite sets, just based on their property.
+  For example, the set of even natural numbers is now trivial:
+
+  val allEvens = PBSet[Int](_ % 2 == 0)
+*/
+
+
 }
