@@ -6,20 +6,20 @@ object Models {
 
   sealed trait Artist {
     def genre: Genre
-    def gigs: Seq[Gig]
+    def gigs:  Seq[Concert]
   }
 
   final case class Band(
-    title: String,
-    members: Seq[Musician],
+    title:              String,
+    members:            Seq[Musician],
     override val genre: Genre,
-    override val gigs: Seq[Gig]
+    override val gigs:  Seq[Concert]
   ) extends Artist
 
   final case class SoloMusician(
-    musician: Musician,
+    musician:           Musician,
     override val genre: Genre,
-    override val gigs: Seq[Gig]
+    override val gigs:  Seq[Concert]
   ) extends Artist
 
   final case class Musician(
@@ -27,9 +27,9 @@ object Models {
     kind: MusicianKind
   )
 
-  final case class Gig(
-    venue: String,
-    date: LocalDate,
+  final case class Concert(
+    venue:   String,
+    date:    LocalDate,
     setlist: Seq[String]
   )
 
@@ -47,7 +47,7 @@ object Models {
 
   object Genre {
     case object Rock extends Genre
-    case object `Hip-Hop` extends Genre
+    case object HipHop extends Genre
     case object Pop extends Genre
     case object Jazz extends Genre
   }
