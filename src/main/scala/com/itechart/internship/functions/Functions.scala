@@ -40,12 +40,36 @@ object Functions {
   // addFunction can be rewritten as:
   val addFunctionExpanded: (Int, Int) => Int = (x, y) => x + y
 
-  // Exercise.
+  // Exercise 1.
   // Implement `isEven` a function that checks if a number is even
   def isEven(x: Int): Boolean = ???
 
   // Implement `isEvenVal` which behaves exactly like `isEven`.
   // val isEvenVal: Int => Boolean = ???
+
+  // functions with unlimited arg
+
+  def printAll(strings: String*): Unit = {
+    strings.foreach(println)
+  }
+
+  // these all work
+  printAll()
+  printAll("foo")
+  printAll("foo", "bar")
+  printAll("foo", "bar", "baz")
+
+  println()
+
+  // you can use Scala’s _* operator to adapt a sequence (Array, List, Seq, Vector, etc.)
+  // so it can be used as an argument for a varargs field:
+
+  // a sequence of strings
+  val fruits = List("apple", "banana", "cherry")
+
+  // pass the sequence to the varargs field
+  printAll(fruits: _*)
+  println()
 
   // Higher order functions
   //
@@ -277,7 +301,7 @@ object Functions {
   // null cannot be removed from the language (although Scala 3 will help handle it)
   // `null` can be passed anywhere
 
-  // Exercise. Provide an example of an impure functions
+  // Exercise 2. Provide an example of an impure functions
 
   // Is `plus` a pure function? Why?
   def plus(a: Int, b: Int): Int = a + b
@@ -307,13 +331,13 @@ object Functions {
   // Potential compiler optimisations
   // Make parallel processing easier
 
-  // Exercises. Convert the following function into a pure function.
+  // Exercise 2. Convert the following function into a pure function.
   type ??? = Nothing // just to make it compile and indicate that return type should be changed
 
   //
   def parseDate(s: String): Instant = Instant.parse(s)
 
-  // TODO: clean up before lection
+  // TODO: remove before lection
   // def parseDatePure(s: String): ??? = ???
   def parseDatePure(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
 
