@@ -4,6 +4,8 @@ object Basics {
 
   // Let's start by quickly going through the basic building blocks of Scala programs.
 
+  // Scala REPL: https://docs.scala-lang.org/overviews/repl/overview.html
+
   // Values
 
   // A value is an immutable, typed storage unit. A value is assigned data when it is defined, but can
@@ -63,8 +65,6 @@ object Basics {
   // Byte - 8-bit signed integer (-2^7 to 2^7 - 1, inclusive)
   // -128 to 127
   val byte1: Byte = 4
-
-  // Question. How large would a set of all possible Byte values be?
 
   // Short - 16-bit signed integer (-2^15 to 2^15 - 1, inclusive)
   // -32,768 to 32,767
@@ -224,7 +224,7 @@ object Basics {
   //   // code goes here
   // }
   //
-  // For now we are ignoring  the distinction between pure functions (without side effects) vs impure
+  // For now we are ignoring the distinction between pure functions (without side effects) vs impure
   // functions (with side effects), methods having multiple parameter lists or type parameters.
   //
   // Try defining it using both String concatenation and interpolation.
@@ -297,7 +297,7 @@ object Basics {
   val errorOccurred:   Either[String, Int] = Left("Failed to parse")
   val normalExecution: Either[String, Int] = Right(4)
 
-  // Exercise 3 to help internalise the "types define the set of possible values that a value can have":
+  // Exercise 2 to help internalise the "types define the set of possible values that a value can have":
 
   // List all values of the type `Option[Boolean]`:
   val allOptionBooleans: Set[Option[Boolean]] = Set()
