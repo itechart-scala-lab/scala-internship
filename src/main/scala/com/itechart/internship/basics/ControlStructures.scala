@@ -136,7 +136,9 @@ object ControlStructures {
     if (list.isEmpty) 0
     else list.head + sum1(list.tail)
 
-  // Question. What are the risks of List#head and List#tail? How can you refactor `sum1` to avoid these invocations?
+  val s1 = sum1(List(1, 2, 3, 4, 5))
+  val s2 = sum1(List(1))
+  val s3 = sum1(List.empty[Int])
 
   // Question. What are the risks of recursion when applied without sufficient foresight?
 

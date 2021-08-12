@@ -65,7 +65,7 @@ object ClassesAndTraits {
     override def move(dx: Double, dy: Double): Vehicle = GroundVehicle(x + dx, y + dy, weight)
   }
 
-  // Exercise: implement Ship case class which will extend Vehicle and contain new property `displacement`
+  // Exercise 1: implement Ship case class which will extend Vehicle and contain new property `displacement`
   // final case class Ship()
 
   // Case Classes
@@ -129,17 +129,6 @@ object ClassesAndTraits {
     def push(x: A): Stack[A] = ???
     def peek: A             = ???
     def pop:  (A, Stack[A]) = ???
-  }
-
-  // TODO: remove before lection
-  final case class StackEnhanced[A](elements: List[A] = Nil) {
-    def push(x: A): Stack[A] = Stack(x :: elements)
-    def peek: Option[A] = elements.headOption
-
-    def pop: Option[(A, Stack[A])] = elements match {
-      case Nil     => None
-      case x :: xs => Some(x, Stack(xs))
-    }
   }
 
   def main(args: Array[String]): Unit = {}
