@@ -1,6 +1,5 @@
 package com.itechart.internship.testing
 
-import com.itechart.internship.testing.hal9000.HAL9000
 import org.scalatest.EitherValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.funsuite.AnyFunSuite
@@ -45,18 +44,15 @@ import scala.concurrent.{Future, Promise}
 // stability of the app, and, generally, one do not want this to be done in
 // production or production-like environments.
 //
-// We have thousands of unit tests in our every app. The most typical usage
-// is testing business logic of the app, but there are a lot more various use
-// cases. A lot of guys are choosing to use behavior driven way of writing
-// their specification, but there is no single style adopted in the company.
-// Most used unit testing framework is ScalaTest (http://www.scalatest.org),
-// but it is not the only one.
+// Basically we should have hundreds or thousands of unit tests per every app
+// (depends on the size of app). The most typical usage is testing business
+// logic of the app, but there are a lot more various use
+// cases.
 //
 // Besides we use contract driven test here such as https://docs.pact.io/,
 // but the adoption is relatively small for now.
 
-
-// *Structure*
+// * Structure *
 //
 // In Java world one of the most used build tools is called Maven. The idea
 // of Maven is to follow "Convention over Configuration" principle.
@@ -69,58 +65,25 @@ import scala.concurrent.{Future, Promise}
 // `src/test/scala` and it compiles and runs everything automatically
 // without a configuration.
 //
-// The classes under test for this workshop are stored in `src/main/scala/testing2`
-// and the tests themselves are stored in `src/test/scala/testing2`.
+// The classes under test for this workshop are stored in `src/main/scala/testing`
 
-
-// *Exercise 1*
+// Part 1
 //
-// Your IDE (IntelliJ or Visual Studio Code + Metals) also understands this
+// Your IDE - IntelliJ also understands this
 // convention and already knows how to run the tests using popular testing
 // frameworks directly from IDE. For some advanced cases you might want to use
 // sbt directly though.
 //
-// Let's try to run all the tests for the bootcamp using `sbt`. Run `sbt test`
-// inside of `scala-bootcamp` directory.
+// Let's try to run all the tests for the project using `sbt`. Run `sbt test`
+// inside of `scala-internship` directory.
 //
 // > sbt test
 //
 // Some tests fails, some test pass, but it takes quite a time to start them.
-// It takes at least several seconds on my powerful laptop.
+// It takes at least several seconds on machine.
 //
 // Why? This is because `sbt` is JVM application and takes considerable time
 // to load. How much the tests took in total on your computer?
-//
-// Latest `sbt` versions (starting from `1.4.0`) have a native client
-// to avoid a startup time. Before that professional Scala developers using
-// `sbt` preferred to run it interactive mode.
-//
-// Let's run `sbt` in interactive mode by running `sbt` without any parameters.
-//
-// > sbt
-//
-// Now type in `test` and press ENTER. Note how long it took to start runing
-// the tests.
-//
-// sbt:scala-bootcamp> test
-//
-// Now try again and again. Did the time change?
-//
-// The reason the time changes is the way JVM works. It uses Just-In-Time
-// compiler, which is able to notice so-called hot spots in the code and
-// compile them into the native code, or even recompile them using the
-// information found during the runtime making it smarter than so called
-// Ahead-Of-Time compilers. That what makes JVM so powerful.
-//
-// Saying that, there is also AOT compiler shipping with JVM these days, so
-// you can actually compile the Java or Scala code into machine code and
-// enjoy the very fast startup time.
-//
-// Can we make it faster if we only want to run part of the tests? There
-// is another command in `sbt` which supports it. It is called `testOnly`
-// Let's try to run the tests related to this workshop only.
-//
-// sbt:scala-bootcamp> testOnly *testing2*
 //
 // There is also a command which only runs the tests failing a previous
 // run or the tests which have their dependencies changed. Try it out.
@@ -129,29 +92,12 @@ import scala.concurrent.{Future, Promise}
 // sbt:scala-bootcamp> testQuick
 //
 
-// *Exercise 2*
+// Part 2
 //
 // There are several popular testing libraries for Scala in existence. Arguably,
 // the most popular and one of most flexible is called `ScalaTest`. One of the
 // reasons why it is so popular is because it supports a lot of testing styles
 // and DSLs.
-//
-// ScalaTest author is Bill Venners, the co-author of "Programming in Scala" book.
-//
-// Other popular libraries are the following:
-//
-// `Specs2` - one of the oldest libraries with opinionated Cucubmer-like DSL,
-//            made by Eric Torreborre from Zalando.
-//
-// `MUnit` - lightweight testing library inspired by JUnit by the author of Metals,
-//           Ólafur Páll Geirsson from Twitter.
-//
-// `Weaver-test` - tailored for integration testing by Olivier Mélois from
-//                 Disney Streaming.
-//
-// `utest` - simple testing library by Li Haoyi from Databricks, authors of
-//           Apache Spark. He just published a new book on Scala advocating
-//           the simple Python-like coding style in Scala.
 //
 // So, what are the styles ScalaTest support? You can find them on the following
 // page: https://www.scalatest.org/user_guide/selecting_a_style
@@ -160,32 +106,12 @@ import scala.concurrent.{Future, Promise}
 //
 // Run the following suite using the command below:
 //
-// sbt:scala-bootcamp> testOnly *testing2.Exercise2Spec
-//
-// Now change the suite so it outputs the following code instead,
-// while keeping all the asserts.
-//
-// [info] Exercise1Spec:
-// [info] calculator
-// [info] - enters the number correctly
-// [info]   fails if incorrect number is pressed
-// [info]   does nothing
-// [info]   - when you just repeat pressing `=`
-//
-// Hint: you can recall the previously run `sbt` commands by pressing
-// up arrow on a keyboard.
-//
-// Hint: you can make the development process even more convenient by
-// forcing `sbt` to monitor the changes you do to the files and rerun
-// the tests automatically by adding `~` before the command. It also
-// works on other `sbt` commands.
-//
-// sbt:scala-bootcamp> ~testOnly *testing.Exercise2Spec
+// sbt:scala-bootcamp> testOnly *testing.Part2Spec
 //
 // Now break one of the tests, i.e. change `calculator.enter(1)` to
 // `calculator.enter(2)`. Observe the output. How did Scala manage
 // to output such a thing?
-class Exercise2Spec extends AnyFreeSpec {
+class Part2Spec extends AnyFreeSpec {
 
   "calculator" - {
     "enters the number correctly" in {
@@ -216,8 +142,7 @@ class Exercise2Spec extends AnyFreeSpec {
 //
 // sbt:scala-bootcamp> testOnly *testing2.Exercise3Spec
 //
-class Exercise3Spec extends AnyWordSpec {
-}
+class Exercise3Spec extends AnyWordSpec {}
 
 // *Note*
 //
@@ -247,7 +172,7 @@ class Exercise4Spec extends AnyFreeSpec with Matchers {
   "calculator" - {
     "enters the number correctly" in {
       val calculator = Calculator()
-      calculator.enter(1) should be (Right(Calculator(1, 0, None)))
+      calculator.enter(1) should be(Right(Calculator(1, 0, None)))
       assert(calculator.enter(7) == Right(Calculator(7, 0, None)))
       assert(calculator.enter(12) == Left("digit out of range"))
     }
@@ -384,8 +309,7 @@ class Exercise7Spec extends AnyFunSuite {
 //
 class Exercise8Spec extends AnyFunSuite {
 
-  test("HAL 9000 behaves as expected when asked to open the door") {
-  }
+  test("HAL 9000 behaves as expected when asked to open the door") {}
 
 }
 
@@ -403,13 +327,6 @@ class Exercise8Spec extends AnyFunSuite {
 //
 // sbt:scala-bootcamp> testOnly *testing2.Exercise9Spec
 //
-class Exercise9Spec extends AnyFunSuite {
-
-  test("HAL9000") {
-    assert(HAL9000.register1 == HAL9000.register2)
-  }
-
-}
 
 // *Exercise 10*
 //
@@ -432,7 +349,7 @@ object Exercise10 {
     def byId(id: String): Option[Player]
     def all: List[Player]
     def update(player: Player): Unit
-    def delete(id: String): Unit
+    def delete(id:     String): Unit
   }
   trait Logging {
     def info(message: String): Unit
@@ -460,7 +377,7 @@ object Exercise10 {
 
       // NOTE: We do not have a returned type annotation and documentation here, why?
       def deleteWorst(minimumScore: Int) = ???
-      def celebrate(bonus: Int) = ???
+      def celebrate(bonus:          Int) = ???
 
     }
 
@@ -504,8 +421,8 @@ class Exercise10Spec extends AnyFunSuite {
 
     // construct fixture
     val repository = ???
-    val logging = ???
-    val service = PlayerService(repository, logging)
+    val logging    = ???
+    val service    = PlayerService(repository, logging)
 
     // perform the test
     service.deleteWorst(???)
@@ -518,8 +435,8 @@ class Exercise10Spec extends AnyFunSuite {
 
     // construct fixture
     val repository = ???
-    val logging = ???
-    val service = PlayerService(repository, logging)
+    val logging    = ???
+    val service    = PlayerService(repository, logging)
 
     // perform the test
     service.celebrate(???)
@@ -637,15 +554,15 @@ object Exercise12 {
   trait PlayerService {
 
     /** Deletes all the players with score lower than minimum.
-     *
-     * @param miniumumScore the minimum score the player stays with.
-     */
+      *
+      * @param miniumumScore the minimum score the player stays with.
+      */
     def deleteWorst(minimumScore: Int): Future[Unit]
 
     /** Adds bonus points to score to all existing players
-     *
-     * @param bonus the bonus points to add to the players.
-     */
+      *
+      * @param bonus the bonus points to add to the players.
+      */
     def celebrate(bonus: Int): Future[Unit]
 
   }
