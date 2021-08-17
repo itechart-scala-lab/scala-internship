@@ -83,11 +83,11 @@ object TestTaskHomework {
       validReadPath  <- validateReadPath(readPath)
       validWritePath <- validateWritePath(writePath)
 
-      spreadsheetParser = new LocalSpreadsheetParser(validReadPath)
-      parsedMatrix     <- spreadsheetParser.parse()
+      spreadsheetParser  = new LocalSpreadsheetParser(validReadPath)
+      parsedSpreadsheet <- spreadsheetParser.parse()
 
       spreadsheetProcessor = new SimpleSpreadsheetProcessor
-      processedSpreadsheet = spreadsheetProcessor.process(parsedMatrix)
+      processedSpreadsheet = spreadsheetProcessor.process(parsedSpreadsheet)
 
       spreadsheetWriter = new LocalSpreadsheetWriter
       _                <- spreadsheetWriter.write(validWritePath, processedSpreadsheet)
