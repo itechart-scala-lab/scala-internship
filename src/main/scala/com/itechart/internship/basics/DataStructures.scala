@@ -67,19 +67,6 @@ object DataStructures {
   val vectorValue1 = vector4(0)
   val vectorValue2 = vector4(3)
 
-  // Sets
-  //
-  // Sets are data structures that don't contain any duplicate elements.
-  // The default Scala `Set` is unordered and immutable.
-
-  val vegetables = Set("tomatoes", "peppers", "pumpkins", "cucumbers", "olives")
-  vegetables("tomatoes") // true
-  vegetables("apple") // false
-  vegetables.contains("tomatoes") // true, same thing
-
-  val moreVegetables = vegetables + "avocado"
-  val lessVegetables = moreVegetables - "peppers"
-
   // Exercise 1. Write a function that checks if all values in a `List` are equal.
   // Think about what you think your function should return if `list` is empty, and why.
   def allEqual[T](list: List[T]): Boolean = {
@@ -189,7 +176,22 @@ object DataStructures {
 
   /** Exploring Functional Sets */
 
+  // Sets
+  //
+  // Sets are data structures that don't contain any duplicate elements.
+  // The default Scala `Set` is unordered and immutable.
+
+  val vegetables = Set("tomatoes", "peppers", "pumpkins", "cucumbers", "olives")
+  vegetables("tomatoes") // true
+  vegetables("apple") // false
+  vegetables.contains("tomatoes") // true, same thing
+
+  val moreVegetables = vegetables + "avocado"
+  val lessVegetables = moreVegetables - "peppers"
+
   val aSet = Set(1, 2, 3, 4, 5)
+
+  // -
 
   /*
   The critical API of a set consists of
@@ -199,7 +201,8 @@ object DataStructures {
    * the ability to remove an element from the set (and if it doesn’t exist, don’t remove it again, of course)
    */
 
-//  Let’s concentrate on the first capability at the moment. The way we tell whether an element is in the set is by calling contains, or apply:
+  //  Let’s concentrate on the first capability at the moment.
+  //  The way we tell whether an element is in the set is by calling contains, or apply:
 
   aSet.contains(2) // true
   aSet(2) // also true
@@ -239,7 +242,8 @@ object DataStructures {
   /** Writing a Small Functional Set
     */
 
-//  Here’s a small experiment — let’s write a small implementation of a set that implements the functional interface A => Boolean:
+  //  Here’s a small experiment — let’s write a small implementation of a
+  //  set that implements the functional interface A => Boolean:
 
   trait RSet[A] extends (A => Boolean) {
     def apply(x:    A): Boolean = contains(x)
