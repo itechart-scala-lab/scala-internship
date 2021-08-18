@@ -8,5 +8,6 @@ object Main {
     println("Main is started")
 
     Logger.info("str to source from depend module")
+    Logger.info(s"passed command line args: ${args.mkString(", ")}")
   }
 }

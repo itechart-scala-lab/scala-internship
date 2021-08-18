@@ -88,7 +88,7 @@ lazy val compilerOptions = Seq(
 
 val basePackage = "com.itechart"
 
-lazy val settings = scalafmtSettings ++ commonSettings
+lazy val defaultSettings = scalafmtSettings ++ commonSettings
 
 lazy val commonSettings = Seq(
   organization := s"$basePackage",
@@ -98,9 +98,7 @@ lazy val commonSettings = Seq(
 
 lazy val scalafmtSettings =
   Seq(
-    scalafmtOnCompile     := true,
-    scalafmtTestOnCompile := true,
-    scalafmtVersion       := "1.2.0"
+    scalafmtOnCompile := true,
   )
 
 lazy val commonDependencies = Seq(
@@ -120,16 +118,21 @@ lazy val root = (project in file("."))
 
 lazy val util = project
   .in(file("util"))
-  .settings(settings)
+  .settings(defaultSettings)
 
 lazy val core = project
   .dependsOn(util)
   .in(file("core"))
   .settings(
-    settings,
+    defaultSettings,
     libraryDependencies ++= commonDependencies ++ testDependencies,
-    Compile / packageBin / mainClass := Some(s"$basePackage.core.Main")
   )
+
+// use `sbt assembly` to build jar files for each module
+
+// then use `scala pathToJarFile.jar arg1 arg2` - it will execute the main class
+
+// example: `scala core/target/scala-2.13/core-assembly-1.0.jar testArg1 testArg2`
 
 // To learn more about multi-project builds, head over to the official sbt
 // documentation at https://www.scala-sbt.org/release/docs/Multi-Project.html
