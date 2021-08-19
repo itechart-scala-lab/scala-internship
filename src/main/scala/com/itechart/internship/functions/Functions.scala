@@ -170,13 +170,12 @@ object Functions {
 
   // Question: What is `A` for `formatNamedValue` in this `formattedLong` invocation of it?
 
-  // Exercise. Invoke `formatNamedValue` with a `List[String]` as `A`. You can use `_.mkString(", ")` to
+  // Exercise 1. Invoke `formatNamedValue` with a `List[String]` as `A`. You can use `_.mkString(", ")` to
   // concatenate the list with comma as a delimiter. You can provide the `List[String]` type
   // explicitly after the method name or for the `format` function.
   val lst = List("1", "2", "3")
 
-  // TODO: remove before lection
-  val test3 = formatNamedValue[List[String]]("name", _.mkString(", "))(lst)
+  val test3 = ???
 
   // In Scala, every concrete type is a type of some class or trait
   // `(String => String)` is the same as scala.Function1[String, String]
@@ -337,9 +336,7 @@ object Functions {
   //
   def parseDate(s: String): Instant = Instant.parse(s)
 
-  // TODO: remove before lection
-  // def parseDatePure(s: String): ??? = ???
-  def parseDatePure(s: String): Option[Instant] = Try(Instant.parse(s)).toOption
+  def parseDatePure(s: String): ??? = ???
 
   val date1 = parseDatePure(Instant.now.toString)
   val data2 = parseDatePure("dkfjsdkfj")
@@ -374,9 +371,7 @@ object Functions {
   // Exercises
   // https://www.codewars.com/kata/555eded1ad94b00403000071/train/scala
   // https://www.codewars.com/kata/525f50e3b73515a6db000b83/train/scala
-  // https://www.codewars.com/kata/526571aae218b8ee490006f4/train/scala
   // https://www.codewars.com/kata/550498447451fbbd7600041c/train/scala
-  // https://www.codewars.com/kata/57eb8fcdf670e99d9b000272/train/scala
   // https://www.codewars.com/kata/51ba717bb08c1cd60f00002f/train/scala
   // https://www.codewars.com/kata/556deca17c58da83c00002db/train/scala
 
