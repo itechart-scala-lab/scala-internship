@@ -1,10 +1,7 @@
 package com.itechart.internship.testing
 
 import com.itechart.internship.testing.UserService._
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatestplus.selenium.WebBrowser
 
 import java.sql.{Connection, DriverManager}
 
@@ -14,28 +11,12 @@ import java.sql.{Connection, DriverManager}
 // Nowadays, with advent of Selenium DSL etc., it is quite easy to use integration
 // testing DSLs for the applications, and, as consequence, some teams are crazy
 // overdoing with these. We recommend to push as much as possible testing towards
-// unit and compiler level tests.
+// unit and functional level tests.
 //
 // Integration tests could be run using embedded servers or using real virtual
 // environments using docker containers etc.
 //
-
-class ItechartSiteSpec extends AnyFunSuite with WebBrowser {
-
-  implicit val driver: WebDriver = new HtmlUnitDriver
-
-  test("itechart domain could be found using Google") {
-    goTo("https://google.com")
-
-    assert(pageTitle == "Google")
-    textField("q").value = "itechart"
-    submit()
-    assert(pageSource contains "itechart.by")
-  }
-
-}
-
-// *Exercise 2*
+// -
 //
 // Sometimes integration tests could be a necessity or, at least very useful.
 // For example, if you need to check your SQL queries are working.
@@ -82,21 +63,17 @@ class UserServiceSpec extends AnyFunSuite {
   }
 
   test("that we can create a table in a database") {
-    val f = new Fixture
+    val f       = new Fixture
     val service = new UserService(f.connection)
     service.createTable()
   }
 
   test("that we can insert a player") {
-    val f = new Fixture
+    val f       = new Fixture
     val service = new UserService(f.connection)
-    ???
+    service.insert(Player("id-001", "Max", 5))
   }
 
-  test("that we can select a player") {
-    val f = new Fixture
-    val service = new UserService(f.connection)
-    ???
-  }
+  // Question. What should be improved in those integration tests?
 
 }
