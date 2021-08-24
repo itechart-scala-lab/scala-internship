@@ -191,11 +191,6 @@ object AlgebraicDataTypes {
   // 3. Immutable data structures
   // 4. ADT is just Data, no functionality -> good for structuring our code
 
-  // Exercise. Define an Algebraic Data Type `Car`, which has a manufacturer, a model, a production year,
-  // and a license plate number (can contain from 3 to 8 upper case letters and numbers). Use value classes
-  // and smart constructors as appropriate.
-  type Car = Nothing
-
   def main(args: Array[String]): Unit = {}
 
   // Attributions and useful links:
