@@ -1,9 +1,10 @@
 package com.itechart.internship.error_handling
 
+import eu.timepit.refined._
 import eu.timepit.refined.api.Refined
-import eu.timepit.refined.numeric.{Even, Negative, NonNegative, Odd, Positive}
+import eu.timepit.refined.auto._
+import eu.timepit.refined.numeric._
 import eu.timepit.refined.string.MatchesRegex
-import eu.timepit.refined.{refineV, W}
 
 object RefinedBasics {
 
