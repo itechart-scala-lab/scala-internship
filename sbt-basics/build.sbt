@@ -1,3 +1,5 @@
+// command `sbt new scala/hello-world.g8` to start a new Scala SBT project
+
 // The simplest possible sbt build file is just one line:
 
 scalaVersion := "2.13.6"
@@ -25,6 +27,9 @@ version      := "1.0"
 
 libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 
+// if we use a double percent symbol (%%), sbt will resolve the relevant Scala version for us
+// If we need to use a specific Scala version, we can use % to resolve the dependencies
+
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the scala-parser-combinators dependency to the set of dependencies
 // that sbt will go and fetch when it starts up.
@@ -36,8 +41,8 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 
 // "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
 
-// You can use Scaladex, an index of all known published Scala libraries. There,
-// after you find the library you want, you can just copy/paste the dependency
+// You can use Scaladex (or Maven central repository), an index of all known published Scala libraries.
+// There, after you find the library you want, you can just copy/paste the dependency
 // information that you need into your build file. For example, on the
 // scala/scala-parser-combinators Scaladex page,
 // https://index.scala-lang.org/scala/scala-parser-combinators, you can copy/paste
@@ -50,12 +55,6 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 //  "org.typelevel" %% "cats-core"   % catsVersion,
 //  "org.typelevel" %% "cats-effect" % catsEffectVersion
 //)
-
-// IMPORTANT NOTE: while build files look _kind of_ like regular Scala, it's
-// important to note that syntax in *.sbt files doesn't always behave like
-// regular Scala. For example, notice in this build file that it's not required
-// to put our settings into an enclosing object or class. Always remember that
-// sbt is a bit different, semantically, than vanilla Scala.
 
 // ============================================================================
 
@@ -72,16 +71,12 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % 
 
 // OPTIONS
 
-lazy val compilerOptions = Seq(
-  "-unchecked",
-  "-feature",
-  "-language:existentials",
-  "-language:higherKinds",
-  "-language:implicitConversions",
-  "-language:postfixOps",
+scalacOptions ++= Seq(
   "-deprecation",
-  "-encoding",
-  "utf8"
+  "-feature",
+  "-Ymacro-annotations",
+  "-Xfatal-warnings",
+  "-Xsource:3"
 )
 
 // SETTINGS
