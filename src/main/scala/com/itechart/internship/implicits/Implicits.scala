@@ -283,17 +283,17 @@ object Implicits {
     case class CustomNumber(value: Float)
 
     /*
-    should be defined on any T which has Fractional[T], should return average value if it can be obtained
+    should be defined on any T which has Integral[T], should return sum value if it can be obtained
 
     should work on our custom CustomNumber
 
     change the signature accordingly, add implicit instances if needed
      */
-    def average[T](values: Seq[T]): Option[T] = ???
+    def sum[T](values: Seq[T]): Option[T] = ???
   }
 
   /*
-  Exercise 3.
+  Exercise 4.
 
   Let's get even more generic!
    */
