@@ -283,7 +283,7 @@ object Implicits {
     case class CustomNumber(value: Float)
 
     /*
-    should be defined on any T which has Integral[T], should return sum value if it can be obtained
+    should be defined on any T which has Summable[T], should return sum value if it can be obtained
 
     should work on our custom CustomNumber
 
