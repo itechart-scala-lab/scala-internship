@@ -73,11 +73,6 @@ object ErrorHandling {
   // "{{string}} does not contain an integer" as `Left` upon failure.
   def parseIntEither(string: String): Either[String, Int] = ???
 
-  // TODO: remove before workshop
-  def parseIntEither1(string: String): Either[String, Int] =
-    Try(Integer.parseInt(string)).toEither.left
-      .map(e => e.getMessage)
-
   // `Either[Throwable, A]` is similar to `Try[A]`. However, because `Try[A]` has its error channel hardcoded
   // to a specific type and `Either[L, R]` does not, `Try[A]` provides more specific methods to deal with
   // throwables. So it may be easier to use in certain scenarios.
@@ -202,8 +197,10 @@ object ErrorHandling {
   // `validate` method takes raw username and age values (for example, as received via POST request),
   // validates them, transforms as needed and returns `AllErrorsOr[Student]` as a result. `mapN` method
   // allows to map other N Validated instances at the same time.
-  def validate(username: String, age: String): AllErrorsOr[Student] =
-    (validateUsername(username), validateAge(age)).mapN(Student)
+  def validate(username: String, age: String): AllErrorsOr[Student] = (
+    validateUsername(username),
+    validateAge(age)
+  ).mapN(Student)
 
   // -
 
