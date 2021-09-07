@@ -103,8 +103,7 @@ object ErrorHandling {
     /** Returned when amount to credit is within the valid range, but has more than 2 decimal places. */
     final case object TooManyDecimals extends TransferError
   }
-  // Exercise. Implement `credit` method, returning `Unit` as `Right` upon success and the appropriate
-  // `TransferError` as `Left` upon failure.
+
   import TransferError._
 
   def validateCredit(amount: BigDecimal): Either[TransferError, BigDecimal] = amount match {
@@ -179,7 +178,7 @@ object ErrorHandling {
     // `productR` method (can also be written as *>) accumulates both username related errors into a single
     // `AllErrorsOr[String]`. However, it ignores the result of the validator on the left and uses only the
     // result of the validator on the right (hence the `R` suffix).
-    validateUsernameLength *> validateUsernameContents
+    validateUsernameLength.productR(validateUsernameContents)
   }
 
   val u1 = validateUsername("ab")
