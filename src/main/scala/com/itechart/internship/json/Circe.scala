@@ -98,17 +98,7 @@ object Circe {
     }
    */
 
-  // TODO: remove before lection
-  lazy val jMatrix: Json = Json.obj(
-    "title" -> Json.fromString("The Matrix"),
-    "year"  -> Json.fromInt(1999),
-    "actors" -> Json.arr(
-      Json.fromString("Keanu Reeves"),
-      Json.fromString("Carrie-Anne Moss"),
-      Json.fromString("Laurence Fishburne")
-    ),
-    "isRatedR" -> Json.fromBoolean(true)
-  )
+  lazy val jMatrix: Json = Json.obj()
 
   /* Parsing */
   val twinPeaksRawJson: String =
@@ -196,8 +186,7 @@ object Circe {
 
     /* Exercise 2: same as killersOnTourJson above, but using optics */
 
-    // TODO: remove before lection
-    lazy val killersOnTourJson2: Json = root.artist.ontour.boolean.modify(_ => true)(parsedKillersJson)
+    lazy val killersOnTourJson2: Json = ???
   }
 
   import optics.killersOnTourJson2
