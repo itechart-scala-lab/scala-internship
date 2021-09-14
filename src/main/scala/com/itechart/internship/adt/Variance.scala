@@ -20,7 +20,6 @@ object Variance extends App {
   //B <: A
   //T[B] no relation T[A]
 
-
   //Contravariance (-)
   //B <: A
   //T[A] <: T[B]
@@ -94,7 +93,8 @@ object Variance extends App {
   }
 
   class OrderService(eventConsumer: EventConsumer[OrderCreatedEvent]) {
-    def createOrder(orderList: List[Int]): Boolean = eventConsumer.consume(OrderCreatedEvent(UUID.randomUUID().toString, orderList))
+    def createOrder(orderList: List[Int]): Boolean =
+      eventConsumer.consume(OrderCreatedEvent(UUID.randomUUID().toString, orderList))
   }
 
   class UserService(eventConsumer: EventConsumer[UserCreatedEvent]) {
@@ -106,7 +106,8 @@ object Variance extends App {
   //Never repeat this at home !!!
   class OrderServiceNew(eventConsumer: EventConsumer[Event]) {
     //    def createOrder(orderList: List[Int]): Boolean = eventConsumer.consume(OrderCreatedEvent(UUID.randomUUID().toString, orderList))
-    def createOrder(orderList: List[Int]): Boolean = eventConsumer.consume(UserCreatedEvent(UUID.randomUUID().toString, UUID.randomUUID().toString))
+    def createOrder(orderList: List[Int]): Boolean =
+      eventConsumer.consume(UserCreatedEvent(UUID.randomUUID().toString, UUID.randomUUID().toString))
   }
 
   val eventConsumer = new EventConsumer[Event]()

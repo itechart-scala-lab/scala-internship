@@ -6,8 +6,8 @@ import doobie.implicits._
 
 object Transactions extends IOApp {
 
-  private val setup = sql"CREATE TABLE crud (id SERIAL PRIMARY KEY, value VARCHAR)"
-  private val count = sql"SELECT id, value FROM crud"
+  private val setup  = sql"CREATE TABLE crud (id SERIAL PRIMARY KEY, value VARCHAR)"
+  private val count  = sql"SELECT id, value FROM crud"
   private val insert = sql"INSERT INTO crud(value) VALUES ('value')"
 
   private val transactor = DbTransactor.make[IO]

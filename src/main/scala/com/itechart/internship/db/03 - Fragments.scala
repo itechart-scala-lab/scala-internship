@@ -48,7 +48,7 @@ object FragmentsUsage extends IOApp {
   // setup
   val ddl1 = Fragment.const(createTableAuthorsSql)
   val ddl2 = Fragment.const(createTableBooksSql)
-  val dml = Fragment.const(populateDataSql)
+  val dml  = Fragment.const(populateDataSql)
 
   def setup(): ConnectionIO[Unit] =
     for {

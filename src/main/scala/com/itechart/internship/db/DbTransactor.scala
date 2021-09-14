@@ -13,10 +13,10 @@ object DbTransactor {
   def make[F[_]: ContextShift: Async]: Resource[F, Transactor[F]] =
     Blocker[F].map { be =>
       Transactor.fromDriverManager[F](
-        driver = dbDriverName,
-        url = dbUrl,
-        user = dbUser,
-        pass = dbPwd,
+        driver  = dbDriverName,
+        url     = dbUrl,
+        user    = dbUser,
+        pass    = dbPwd,
         blocker = be,
       )
     }
@@ -33,11 +33,11 @@ object DbTransactor {
       be <- Blocker[F]
       xa <- HikariTransactor.newHikariTransactor[F](
         driverClassName = dbDriverName,
-        url = dbUrl,
-        user = dbUser,
-        pass = dbPwd,
-        connectEC = ce, // await connection on this EC
-        blocker = be, // execute JDBC operations on this EC
+        url             = dbUrl,
+        user            = dbUser,
+        pass            = dbPwd,
+        connectEC       = ce, // await connection on this EC
+        blocker         = be, // execute JDBC operations on this EC
       )
     } yield xa
 }

@@ -147,8 +147,9 @@ object Implicits {
       number1: Int,
     )(
       number2: Int,
-    )(implicit
-      key: MagicKey,
+    )(
+      implicit
+      key:    MagicKey,
       potion: MagicPotion,
     ): String = s"Number $number1 and $number2 have been put in the magic box using $key and $potion"
 
@@ -228,7 +229,7 @@ object Implicits {
       case class MyLuckyNumber(value: Int)
       object MyLuckyNumber {
         implicit val myLuckyNumberShow: Show[MyLuckyNumber] =
-          (luckyNumber: MyLuckyNumber) => s"lucky ${ luckyNumber.value }"
+          (luckyNumber: MyLuckyNumber) => s"lucky ${luckyNumber.value}"
       }
 
       def showEverything(): Unit = {
@@ -259,10 +260,10 @@ object Implicits {
   Let's get to know them better!
    */
   object Exercise3 {
-    /**
-     * Amount of years since the invention of the
-     * hyper-drive technology (we are certainly in negative values at the moment).
-     */
+
+    /** Amount of years since the invention of the
+      * hyper-drive technology (we are certainly in negative values at the moment).
+      */
     case class HDEYears(value: Long)
 
     /*
@@ -275,11 +276,9 @@ object Implicits {
      */
     def secondBiggestValue[T](values: Seq[T]): Option[T] = ???
 
-
-    /**
-     * Custom number type!
-     * For now it just wraps a Float but more interesting stuff could come in the future, who knows...
-     */
+    /** Custom number type!
+      * For now it just wraps a Float but more interesting stuff could come in the future, who knows...
+      */
     case class CustomNumber(value: Float)
 
     /*

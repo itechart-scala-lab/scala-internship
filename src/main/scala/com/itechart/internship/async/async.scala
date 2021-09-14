@@ -33,7 +33,6 @@ object BasicFutures extends App {
   val failedFuture: Future[Int] = Future.failed(new RuntimeException("oh my")) //doesn't schedule work
   failedFuture.failed.foreach(t => t.printStackTrace())
 
-
   val futureFromBlock: Future[String] = Future {
     //code block is immediately scheduled for execution on the implicit execution context
     //if you throw an exception inside the block, it is converted to a failed future case
@@ -53,7 +52,7 @@ object FutureFromPromise extends App {
     future.onComplete {
       case Success(value) =>
         promise.success(value + 1) //can be called only once
-      case Failure(t)     =>
+      case Failure(t) =>
         promise.failure(t) //can be called only once
     } //can be replaced with promise.complete(result: Try[T])
     //promise can be completed only once!
@@ -83,7 +82,7 @@ object FutureFromPromise extends App {
   - tryComplete
 
   Add implicit args to the function if needed!
-   */
+ */
 object Exercise1 extends App {
   def firstCompleted[T](f1: Future[T], f2: Future[T])(implicit ec: ExecutionContext): Future[T] = ???
 
@@ -246,10 +245,9 @@ Make this work correctly a) first with synchronized blocks, b) then with AtomicR
  */
 object Exercise3 extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
-  val tasksCount = 100
+  val tasksCount     = 100
   val taskIterations = 1000
   val initialBalance = 10
-
 
   // PLACE TO FIX - START
   var balance1: Int = initialBalance
@@ -266,7 +264,6 @@ object Exercise3 extends App {
   }
   // PLACE TO FIX - FINISH
 
-
   def transfer(state: State): State = {
     if (state.balance1 >= state.balance2) {
       State(state.balance1 - 1, state.balance2 + 1)
@@ -275,9 +272,11 @@ object Exercise3 extends App {
     }
   }
 
-  val tasks = (1 to tasksCount).toVector.map(_ => Future {
-    (1 to taskIterations).foreach(_ => doTaskIteration())
-  })
+  val tasks = (1 to tasksCount).toVector.map(_ =>
+    Future {
+      (1 to taskIterations).foreach(_ => doTaskIteration())
+    }
+  )
   val tasksResultFuture: Future[Vector[Unit]] = Future.sequence(tasks)
   Await.ready(tasksResultFuture, 5.seconds)
 

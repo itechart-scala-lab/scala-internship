@@ -3,10 +3,10 @@ package com.itechart.internship.testing
 import Calculator._
 
 /** Simple calculator with buttons.
- *
- * @param memory whatever is stored in the memory.
- * @param screen whatever you see on the screen.
- */
+  *
+  * @param memory whatever is stored in the memory.
+  * @param screen whatever you see on the screen.
+  */
 case class Calculator(memory: Int = 0, screen: Int = 0, operation: Option[Operation] = None) {
 
   def enter(digit: Int): Either[String, Calculator] =
@@ -18,8 +18,8 @@ case class Calculator(memory: Int = 0, screen: Int = 0, operation: Option[Operat
 
   def plus: Calculator = this.copy(operation = Some(Operation.Plus))
 
-  def calculate: Calculator = operation.fold(this) {
-    case Operation.Plus => Calculator(memory = 0, screen = screen + memory)
+  def calculate: Calculator = operation.fold(this) { case Operation.Plus =>
+    Calculator(memory = 0, screen = screen + memory)
   }
 
 }

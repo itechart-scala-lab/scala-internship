@@ -49,17 +49,17 @@ object Jdbc {
 
   private def fetchHPBooks(connection: Connection): List[BookWithAuthor] = {
     val stmt = connection.createStatement()
-    val rs = stmt.executeQuery(fetchHarryPotterBooksSql)
+    val rs   = stmt.executeQuery(fetchHarryPotterBooksSql)
 
     def parseBooks(): List[BookWithAuthor] = {
       @tailrec def internalParseBooks(acc: List[BookWithAuthor]): List[BookWithAuthor] =
         if (rs.next()) {
           val bookId = UUID.fromString(rs.getString("books.id"))
-          val title = rs.getString("books.title")
-          val year = Year.of(rs.getInt("books.year"))
+          val title  = rs.getString("books.title")
+          val year   = Year.of(rs.getInt("books.year"))
           val author = Author(
-            id = UUID.fromString(rs.getString("authors.id")),
-            name = rs.getString("authors.name"),
+            id       = UUID.fromString(rs.getString("authors.id")),
+            name     = rs.getString("authors.name"),
             birthday = rs.getDate("authors.birthday").toLocalDate,
           )
           internalParseBooks(acc :+ BookWithAuthor(bookId, author, title, year))

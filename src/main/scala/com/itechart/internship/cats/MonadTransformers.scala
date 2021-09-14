@@ -15,9 +15,9 @@ object For {
 
   trait Repository {
 
-    def getFriends(userId: UserId): Either[Error, List[UserId]] = ???
-    def getOrder(userId: UserId): Either[Error, OrderId] = ???
-    def getItems(orderId: OrderId): Either[Error, List[Item]] = ???
+    def getFriends(userId: UserId):  Either[Error, List[UserId]] = ???
+    def getOrder(userId:   UserId):  Either[Error, OrderId]      = ???
+    def getItems(orderId:  OrderId): Either[Error, List[Item]]   = ???
   }
 
   class Task1(repo: Repository) {
@@ -36,8 +36,8 @@ object For {
     def friendsOrders(userId: UserId): Either[Error, List[Item]] = {
       for {
         friendsIds <- repo.getFriends(userId)
-        orderIds <- friendsIds.traverse(id => repo.getOrder(id))
-        itemsIds <- orderIds.traverse(id => repo.getItems(id))
+        orderIds   <- friendsIds.traverse(id => repo.getOrder(id))
+        itemsIds   <- orderIds.traverse(id => repo.getItems(id))
       } yield itemsIds.flatten
 
 //      for {
@@ -60,9 +60,9 @@ object MonadTransformers {
 
   trait Repository {
 
-    def getFriends(userId: UserId): IO[Either[Error, List[UserId]]] = ???
-    def getOrder(userId: UserId): IO[Either[Error, OrderId]] = ???
-    def getItems(orderId: OrderId): IO[Either[Error, List[Item]]] = ???
+    def getFriends(userId: UserId):  IO[Either[Error, List[UserId]]] = ???
+    def getOrder(userId:   UserId):  IO[Either[Error, OrderId]]      = ???
+    def getItems(orderId:  OrderId): IO[Either[Error, List[Item]]]   = ???
   }
 
   // implement
@@ -70,9 +70,9 @@ object MonadTransformers {
 
     def friendsOrders(userId: UserId): IO[Either[Error, List[Item]]] = {
       val res = for {
-        friendsIds  <- EitherT(repo.getFriends(userId))
-        orderIds    <- friendsIds.traverse(id => EitherT(repo.getOrder(id)))
-        itemsIds    <- orderIds.traverse(id => EitherT(repo.getItems(id)))
+        friendsIds <- EitherT(repo.getFriends(userId))
+        orderIds   <- friendsIds.traverse(id => EitherT(repo.getOrder(id)))
+        itemsIds   <- orderIds.traverse(id => EitherT(repo.getItems(id)))
       } yield itemsIds.flatten
       res.value
     }
@@ -97,7 +97,7 @@ object Generic {
   }
 
   // implement
-  class Service[F[_] : Monad](repo: Repository[F]) {
+  class Service[F[_]: Monad](repo: Repository[F]) {
 
     def friendsOrders(userId: UserId): F[List[Item]] = ???
   }

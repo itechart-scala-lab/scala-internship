@@ -78,7 +78,7 @@ import scala.annotation.nowarn
 //
 // Run the following suite using the command below:
 //
-// sbt:scala-bootcamp> testOnly *testing.CalculatorSpec
+// sbt testOnly *testing.CalculatorSpec
 //
 // Now break one of the tests, i.e. change `calculator.enter(1)` to
 // `calculator.enter(2)`. Observe the output. How did Scala manage

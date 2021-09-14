@@ -70,7 +70,7 @@ object Fp extends App {
       def toJson(entity: Option[A]): Json = {
         entity match {
           case Some(value) => jsonableA.toJson(value)
-          case None => Json("null")
+          case None        => Json("null")
         }
       }
     }
@@ -149,7 +149,6 @@ object Syntax {
     println(x.toJson)
   }
 }
-
 
 object Result {
 
