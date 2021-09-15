@@ -19,7 +19,7 @@ object CatsTypeClasses {
 
     import cats.Functor
     import cats.instances.list._
-    val listFunctor = Functor[List]
+    val listFunctor: Functor[List] = Functor[List]
 
     // generalizable "mapping" APIs
     def increment[F[_]](container: F[Int])(implicit functor: Functor[F]): F[Int] =
@@ -29,13 +29,25 @@ object CatsTypeClasses {
     def increment_v2[F[_]: Functor](container: F[Int]): F[Int] =
       container.map(_ + 1)
 
+    // TODO 1: define your own functor for a binary tree
+    // hint: define an object which extends Functor[Tree]
+    trait Tree[+T]
+    object Tree {
+      // "smart" constructors
+      def leaf[T](value: T): Tree[T] = Leaf(value)
+      def branch[T](value: T, left: Tree[T], right: Tree[T]): Tree[T] = Branch(value, left, right)
+    }
+    case class Leaf[+T](value: T) extends Tree[T]
+    case class Branch[+T](value: T, left: Tree[T], right: Tree[T]) extends Tree[T]
+
+
     // applicative - the ability to "wrap" types
     trait MyApplicative[F[_]] extends MyFunctor[F] {
       def pure[A](value: A): F[A]
     }
 
     import cats.Applicative
-    val applicativeList = Applicative[List]
+    val applicativeList: Applicative[List] = Applicative[List]
     val aSimpleList: List[Int] = applicativeList.pure(43)
     import cats.syntax.applicative._ // import the pure extension method
     val aSimpleList_v2: List[Int] = 43.pure[List]
@@ -46,7 +58,7 @@ object CatsTypeClasses {
     }
 
     import cats.FlatMap
-    val flatMapList = FlatMap[List]
+    val flatMapList: FlatMap[List] = FlatMap[List]
     import cats.syntax.flatMap._ // flatMap extension method
     def crossProduct[F[_]: FlatMap, A, B](fa: F[A], fb: F[B]): F[(A, B)] =
       fa.flatMap(a => fb.map(b => (a, b)))
@@ -58,7 +70,7 @@ object CatsTypeClasses {
     }
 
     import cats.Monad
-    val monadList = Monad[List]
+    val monadList: Monad[List] = Monad[List]
     def crossProduct_v2[F[_]: Monad, A, B](fa: F[A], fb: F[B]): F[(A, B)] =
       for {
         a <- fa
@@ -71,6 +83,13 @@ object CatsTypeClasses {
                       Applicative -> Monad
      */
 
+    // Weaker monads
+    def getPairs[M[_] : FlatMap, A, B](numbers: M[A], chars: M[B]): M[(A, B)] = for {
+      n <- numbers
+      c <- chars
+    } yield (n, c)
+
+
     // error-like type classes
     trait MyApplicativeError[F[_], E] extends MyApplicative[F] {
       def raiseError[A](e: E): F[A]
@@ -78,7 +97,7 @@ object CatsTypeClasses {
 
     import cats.ApplicativeError
     type ErrorOr[A] = Either[String, A]
-    val appErrorEither = ApplicativeError[ErrorOr, String]
+    val appErrorEither: ApplicativeError[ErrorOr, String] = ApplicativeError[ErrorOr, String]
     val desirableValue: ErrorOr[Int] = appErrorEither.pure(42)
     val failedValue:    ErrorOr[Int] = appErrorEither.raiseError("Something failed")
     import cats.syntax.applicativeError._ // raiseError extension method
@@ -86,7 +105,7 @@ object CatsTypeClasses {
 
     trait MyMonadError[F[_], E] extends MyApplicativeError[F, E] with Monad[F]
     import cats.MonadError
-    val monadErrorEither = MonadError[ErrorOr, String]
+    val monadErrorEither: MonadError[ErrorOr, String] = MonadError[ErrorOr, String]
 
     // traverse
     trait MyTraverse[F[_]] extends MyFunctor[F] {
@@ -96,7 +115,7 @@ object CatsTypeClasses {
     // turn nested wrappers inside out
     val listOfOptions: List[Option[Int]] = List(Some(1), Some(2), Some(43))
     import cats.Traverse
-    val listTraverse = Traverse[List]
+    val listTraverse: Traverse[List] = Traverse[List]
     val optionList: Option[List[Int]] = listTraverse.traverse(List(1, 2, 3))(x => Option(x))
     import cats.syntax.traverse._
     val optionList_v2: Option[List[Int]] = List(1, 2, 3).traverse(x => Option(x))
