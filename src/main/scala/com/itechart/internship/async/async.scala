@@ -71,37 +71,6 @@ object FutureFromPromise extends App {
   }
 }
 
-/*
-  Implement firstCompleted.
-
-  Result future should be completed with a result or a failure of a first one to complete from the 2 provided.
-  Use promises and promise completion methods which doesn't fail on multiple attempts (only the first one
-  succeeds):
-  - trySuccess
-  - tryFailure
-  - tryComplete
-
-  Add implicit args to the function if needed!
- */
-object Exercise1 extends App {
-  def firstCompleted[T](f1: Future[T], f2: Future[T])(implicit ec: ExecutionContext): Future[T] = ???
-
-  {
-    import scala.concurrent.ExecutionContext.Implicits.global
-
-    val future1 = Future {
-      Thread.sleep(1000L) //normally you don't use thread sleep for async programming in Scala
-      123
-    }
-    val future2 = Future {
-      Thread.sleep(500L)
-      321
-    }
-
-    println(Await.result(firstCompleted(future1, future2), 5.seconds))
-  }
-}
-
 object TransformFutures extends App {
   def asyncInc(future: Future[Int])(implicit ec: ExecutionContext): Future[Int] =
     future.map(_ + 1)
@@ -175,8 +144,6 @@ object SharedStateProblems extends App {
 object SharedStateSynchronized extends App {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  //all variables which are read and written by multiple threads should be declared as volatile
-  @volatile
   var counter: Int = 0
 
   def threadSafeInc(): Unit = synchronized {
