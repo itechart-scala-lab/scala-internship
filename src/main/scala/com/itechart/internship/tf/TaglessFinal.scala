@@ -1,10 +1,11 @@
 package com.itechart.internship.tf
 
+import cats.Applicative
 import cats.effect._
 import cats.effect.concurrent.Ref
 import cats.implicits._
-import com.itechart.internship.tf.ItemService.ValidationError
-import com.itechart.internship.tf.ItemService.ValidationError.{EmptyName, NegativePrice}
+import com.itechart.internship.tf.ItemValidator.ItemValidationError._
+import com.itechart.internship.tf.ItemValidator._
 
 /*
   Additional materials:
@@ -26,8 +27,8 @@ final case class Item(id: Long, name: String, price: BigDecimal)
 
 trait ClassicItemService {
   def all: Map[Long, Item]
-  def create(name: String, price: BigDecimal): Either[ValidationError, Item]
-  def update(item: Item): Either[ValidationError, Boolean]
+  def create(name: String, price: BigDecimal): Either[ItemValidationError, Item]
+  def update(item: Item): Either[ItemValidationError, Boolean]
   def find(id:     Long): Option[Item]
   def delete(id:   Long): Boolean
 }
@@ -49,42 +50,48 @@ execution. Libraries such as Cats Effects, Monix, or even ZIO, provide us some e
 
 trait ItemService[F[_]] {
   def all: F[Map[Long, Item]]
-  def create(name: String, price: BigDecimal): F[Either[ValidationError, Item]]
-  def update(item: Item): F[Either[ValidationError, Boolean]]
+  def create(name: String, price: BigDecimal): F[Either[ItemValidationError, Item]]
+  def update(item: Item): F[Either[ItemValidationError, Boolean]]
   def find(id:     Long): F[Option[Item]]
   def delete(id:   Long): F[Boolean]
 }
 
 object ItemService {
 
-  sealed trait ValidationError extends Throwable
-
-  object ValidationError {
-    case object EmptyName extends ValidationError
-    case object NegativePrice extends ValidationError
-  }
-
-  private[tf] def validate(name: String, price: BigDecimal): Either[ValidationError, (String, BigDecimal)] =
-    for {
-      name  <- Either.cond(name.nonEmpty, name, EmptyName)
-      price <- Either.cond(price > 0, price, NegativePrice)
-    } yield (name, price)
+  // [F[_]: Sync] - instead of Sync you can define Functor, Monad, Application etc ... as a TYPE
+  // to be more specific and use particular features of Monads
+  // Example: For Expression with multiple generators
 
   def of[F[_]: Sync]: F[ItemService[F]] = for {
     counter <- Ref.of[F, Long](0)
     items   <- Ref.of[F, Map[Long, Item]](Map.empty)
-  } yield new ItemServiceImpl(counter, items)
+  } yield new InMemoryItemService(counter, items)
 }
 
-final private class ItemServiceImpl[F[_]: Sync](
+object ItemValidator {
+  sealed trait ItemValidationError extends Throwable
+
+  object ItemValidationError {
+    case object EmptyName extends ItemValidationError
+    case object NegativePrice extends ItemValidationError
+  }
+
+  def validate(name: String, price: BigDecimal): Either[ItemValidationError, (String, BigDecimal)] =
+    for {
+      name  <- Either.cond(name.nonEmpty, name, EmptyName)
+      price <- Either.cond(price > 0, price, NegativePrice)
+    } yield (name, price)
+}
+
+final private class InMemoryItemService[F[_]: Sync](
   counter: Ref[F, Long],
   items:   Ref[F, Map[Long, Item]]
 ) extends ItemService[F] {
 
   override def all: F[Map[Long, Item]] = items.get
 
-  override def create(name: String, price: BigDecimal): F[Either[ValidationError, Item]] =
-    ItemService.validate(name, price).traverse { case (name, price) =>
+  override def create(name: String, price: BigDecimal): F[Either[ItemValidationError, Item]] =
+    ItemValidator.validate(name, price).traverse { case (name, price) =>
       for {
         id  <- counter.updateAndGet(_ + 1)
         item = Item(id, name, price)
@@ -92,8 +99,8 @@ final private class ItemServiceImpl[F[_]: Sync](
       } yield item
     }
 
-  override def update(item: Item): F[Either[ValidationError, Boolean]] =
-    ItemService.validate(item.name, item.price).traverse { _ =>
+  override def update(item: Item): F[Either[ItemValidationError, Boolean]] =
+    ItemValidator.validate(item.name, item.price).traverse { _ =>
       items.modify { items =>
         if (items.contains(item.id)) items.updated(item.id, item) -> true
         else items                                                -> false
@@ -102,26 +109,63 @@ final private class ItemServiceImpl[F[_]: Sync](
 
   override def find(id: Long): F[Option[Item]] = items.get.map(_.get(id))
 
-  override def delete(id: Long): F[Boolean] = items.modify { items =>
-    items.removed(id) -> items.contains(id)
+  override def delete(id: Long): F[Boolean] =
+    items.modify { items =>
+      items.removed(id) -> items.contains(id)
+    }
+}
+
+trait Logger[F[_]] {
+  def info(msg:  String): F[Unit]
+  def error(msg: String): F[Unit]
+}
+
+object Logger {
+  def of[F[_]: Applicative](component: String): Logger[F] = {
+    new Logger[F] {
+      override def info(msg:  String): F[Unit] = println(s"$component - INFO: $msg").pure[F]
+      override def error(msg: String): F[Unit] = println(s"$component - ERROR: $msg").pure[F]
+    }
   }
 }
 
-object App1 extends IOApp {
+object ItemApp extends IOApp {
 
-  override def run(args: List[String]): IO[ExitCode] = {
-    for {
-      itemService <- ItemService.of[IO]
+  def program[F[_]: Sync]: F[Unit] = for {
 
-      all1 <- itemService.all
-      _    <- IO(println(all1))
+    itemService <- ItemService.of[F]
+    logger       = Logger.of[F]("ItemApp")
 
-      _ <- itemService.create("Test Item #1", BigDecimal(10.0))
-      _ <- itemService.create("Test Item #2", BigDecimal(15.0))
+    allBefore <- itemService.all
+    _         <- logger.info(s"Initial data: $allBefore")
 
-      all2 <- itemService.all
-      _    <- IO(println(all2))
+    _ <- itemService.create("Test Item #1", BigDecimal(10.0))
+    _ <- itemService.create("Test Item #2", BigDecimal(15.0))
 
-    } yield ExitCode.Success
-  }
+    creationError <- itemService.create("Test Item #3", BigDecimal(0.0))
+
+    _ <- logger.error(
+      creationError.fold(_.toString, _ => s"Item creation isn't expected")
+    )
+
+    allAfter <- itemService.all
+    _        <- logger.info(s"Result data: $allAfter")
+  } yield ()
+
+  override def run(args: List[String]): IO[ExitCode] = for {
+    _ <- program[IO]
+  } yield ExitCode.Success
 }
+
+/*
+  CONCLUSION
+
+  Tagless Final - a functional design pattern, that helps to define an interface
+  of your application in an abstract from side effects way.
+
+  For example, you have UserService with some CRUD operations, which produce side effects,
+  so those side effects are encapsulated into specific data structures, for example, Monads.
+  But the thing is you want to be flexible which exact monad should be used…
+  you want Either, Future, IO or something else… it doesn't matter with tagless final.
+
+ */
