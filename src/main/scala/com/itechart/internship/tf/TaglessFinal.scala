@@ -7,6 +7,8 @@ import cats.implicits._
 import com.itechart.internship.tf.ItemValidator.ItemValidationError._
 import com.itechart.internship.tf.ItemValidator._
 
+import scala.concurrent.Future
+
 /*
   Additional materials:
 
@@ -20,8 +22,6 @@ import com.itechart.internship.tf.ItemValidator._
 
   Practical FP in Scala https://leanpub.com/pfp-scala (Chapters 3, 4)
  */
-
-// Part 1
 
 final case class Item(id: Long, name: String, price: BigDecimal)
 
@@ -37,8 +37,20 @@ trait ClassicItemService {
 
 The first problem with these functions is that they perform some side effects for sure.
 The create function will probably persist information on a database, as will the add function.
-The find function will eventually retrieve a shopping cart from a database, and this operation
-can eventually fail.
+The find function will eventually retrieve an item from a database, and this operation
+can eventually fail. One option is to use Future (accepting all it cons)
+
+ */
+
+trait FutureItemService {
+  def all: Future[Map[Long, Item]]
+  def create(name: String, price: BigDecimal): Future[Either[ItemValidationError, Item]]
+  def update(item: Item): Future[Either[ItemValidationError, Boolean]]
+  def find(id:     Long): Future[Option[Item]]
+  def delete(id:   Long): Future[Boolean]
+}
+
+/*
 
 Fortunately, many Scala libraries allow developers to encapsulate the operation description
 that produces side effects inside some declarative contexts. Such contexts are called effects.
@@ -47,6 +59,19 @@ through the effect pattern. Hence, the description of the side effect is separat
 execution. Libraries such as Cats Effects, Monix, or even ZIO, provide us some effect types.
 
  */
+
+trait IOItemService {
+  def all: IO[Map[Long, Item]]
+  def create(name: String, price: BigDecimal): IO[Either[ItemValidationError, Item]]
+  def update(item: Item): IO[Either[ItemValidationError, Boolean]]
+  def find(id:     Long): IO[Option[Item]]
+  def delete(id:   Long): IO[Boolean]
+}
+
+// How I can make ItemService abstract from the way how side effects are handled?
+// I just want to define interface for business logic ...
+
+// Tagless Final is on board!
 
 trait ItemService[F[_]] {
   def all: F[Map[Long, Item]]
@@ -160,7 +185,7 @@ object ItemApp extends IOApp {
 /*
   CONCLUSION
 
-  Tagless Final - a functional design pattern, that helps to define an interface
+  Tagless Final - is a functional design pattern, that helps to define an interface
   of your application in an abstract from side effects way.
 
   For example, you have UserService with some CRUD operations, which produce side effects,
