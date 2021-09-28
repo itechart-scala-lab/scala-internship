@@ -12,7 +12,6 @@ object Homework {
   // Core features:
 
   // - CRUD of employees
-  // - Add employees to the archive (also in memory) as an alternative to removal
   // - Employees validation
   // - Add tests for core features
 }

@@ -108,6 +108,8 @@ object ItemValidator {
     } yield (name, price)
 }
 
+// About Ref: https://www.pluralsight.com/tech-blog/scala-cats-effect-ref/
+
 final private class InMemoryItemService[F[_]: Sync](
   counter: Ref[F, Long],
   items:   Ref[F, Map[Long, Item]]
@@ -115,6 +117,7 @@ final private class InMemoryItemService[F[_]: Sync](
 
   override def all: F[Map[Long, Item]] = items.get
 
+  // Ref: update can perform a “get and set” operation
   override def create(name: String, price: BigDecimal): F[Either[ItemValidationError, Item]] =
     ItemValidator.validate(name, price).traverse { case (name, price) =>
       for {
@@ -124,6 +127,7 @@ final private class InMemoryItemService[F[_]: Sync](
       } yield item
     }
 
+  // // Ref: modify can perform a “get and set and get” operation
   override def update(item: Item): F[Either[ItemValidationError, Boolean]] =
     ItemValidator.validate(item.name, item.price).traverse { _ =>
       items.modify { items =>
@@ -132,7 +136,7 @@ final private class InMemoryItemService[F[_]: Sync](
       }
     }
 
-  override def find(id: Long): F[Option[Item]] = items.get.map(_.get(id))
+  override def find(id: Long): F[Option[Item]] = ???
 
   override def delete(id: Long): F[Boolean] =
     items.modify { items =>
