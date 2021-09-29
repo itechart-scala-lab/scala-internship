@@ -12,12 +12,12 @@ package com.itechart.internship.http
 //    the client, whether the current number is lower, greater or equal to the guessed one.
 // 4. The game ends when the number is guessed or there are no more attempts left. At this point the client
 //    should terminate, while the server may continue running forever.
-// 5. The server should support playing many separate games (with different clients) at the same time.
-//
-// The exact protocol and message format to use is not specified and should be designed while working on the task.
+
 object GuessServer {
   // ...
 }
 object GuessClient {
   // ...
 }
+
+// Optional. Create HTTP interface for Tagless Final homework
