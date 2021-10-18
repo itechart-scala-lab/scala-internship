@@ -27,6 +27,8 @@ val scalaTestVersion        = "3.1.0.0-RC2"
 val h2Version               = "1.4.200"
 val enumeratumVersion       = "1.6.1"
 val dtoMapperChimneyVersion = "0.6.1"
+val sparkVersion            = "3.2.0"
+val scoptVersion            = "3.7.1"
 
 libraryDependencies ++= Seq(
   "org.typelevel"            %% "cats-core"                     % catsVersion,
@@ -71,7 +73,10 @@ libraryDependencies ++= Seq(
   "io.circe"                 %% "circe-generic"                 % circeVersion,
   "io.circe"                 %% "circe-generic-extras"          % circeVersion,
   "io.circe"                 %% "circe-optics"                  % circeVersion,
-  "io.circe"                 %% "circe-parser"                  % circeVersion
+  "io.circe"                 %% "circe-parser"                  % circeVersion,
+  "org.apache.spark"         %% "spark-core"                    % sparkVersion,
+  "org.apache.spark"         %% "spark-sql"                     % sparkVersion,
+  "com.github.scopt"         %% "scopt"                         % scoptVersion
 )
 
 addCompilerPlugin(

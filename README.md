@@ -37,6 +37,6 @@
 | 07.10.2021    | Working with databases. JDBC. Doobie & Slick  | Vladimir Apolaiko                  | [Db](src/main/scala/com/itechart/internship/db)                                                           |
 | 12.10.2021    | Containerization - Docker & Testcontainers    | Vadim Dubatovka                    |                                                                                                           |
 | 14.10.2021    | Development Practices & Processes             | Alexey Kleschikov                  |                                                                                                           |
-| 19.10.2021    | Apache Spark. Intro                           | Gleb Streltsov                     |                                                                                                           |
+| 19.10.2021    | Apache Spark. Intro                           | Gleb Streltsov                     | [Spark](src/main/scala/com/itechart/internship/spark)                                                     |
 | 21.10.2021    | Course Project. Intro                         | Gleb Streltsov                     |                                                                                                           |
 | 04.11.2021    | Course Project. Demo                          | Gleb Streltsov                     |                                                                                                           |

@@ -1,7 +1,9 @@
 # Default ignored files
 /shelf/
 /workspace.xml
-*/.bsb/*
+.bsb/*
+/tmp/*
+/output/*
 
 .idea/*
 target/*
