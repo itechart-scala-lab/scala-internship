@@ -15,8 +15,8 @@ import scala.concurrent.Future
   Papers by Oleg Kiselyov http://okmij.org/ftp/tagless-final/index.html
   (Haskell, 18+)
 
-  Что такое tagless final? https://www.youtube.com/watch?v=ZNK57IXgr3M
-  (Scala 3, история развития кодировок от Черча до TF)
+  What is tagless final? https://www.youtube.com/watch?v=ZNK57IXgr3M
+  (Scala 3, very detailed)
 
   Tagless Final lessons series https://www.youtube.com/watch?v=XJ2NjqkWdck&list=PLJGDHERh23x-3_T3Dua6Fwp4KlG0J25DI
 
